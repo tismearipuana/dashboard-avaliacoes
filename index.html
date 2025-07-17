@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Avaliações Escolares</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="logos-header.png" alt="Logos da Dashboard de Avaliações" class="header-logo">
+    </header>
+
+    <main>
+        <section class="filters">
+            <div class="filter-group">
+                <label for="school-filter">Escola:</label>
+                <select id="school-filter">
+                    <option value="">Todas as Escolas</option>
+                    </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="evaluation-filter">Avaliação:</label>
+                <select id="evaluation-filter">
+                    <option value="">Todas as Avaliações</option>
+                    </select>
+            </div>
+
+            <div class="filter-group" id="level-filter-group" style="display: none;">
+                <label for="level-filter">Nível/Classificação:</label>
+                <select id="level-filter">
+                    <option value="">Todos os Níveis</option>
+                    </select>
+            </div>
+            
+            <div class="filter-group" id="nse-filter-group" style="display: none;">
+                <label for="nse-filter">Beneficiário de Progama Social:</label>
+                <select id="nse-filter">
+                    <option value="">Todos</option>
+                    </select>
+            </div>
+
+            <div class="filter-group" id="cor-raca-filter-group" style="display: none;">
+                <label for="cor-raca-filter">Cor/Raça:</label>
+                <select id="cor-raca-filter">
+                    <option value="">Todas as Cores/Raças</option>
+                    </select>
+            </div>
+
+            <div class="filter-group" id="inclusao-filter-group" style="display: none;">
+                <label for="inclusao-filter">Inclusão:</label>
+                <select id="inclusao-filter">
+                    <option value="">Todas as Inclusões</option>
+                    </select>
+            </div>
+
+            <div class="filter-group" id="transporte-filter-group" style="display: none;">
+                <label for="transporte-filter">Usuário do Transporte Escolar:</label>
+                <select id="transporte-filter">
+                    <option value="">Selecione</option>
+                    </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="year-filter">Etapa de Ensino:</label>
+                <select id="year-filter">
+                    <option value="">Todos os Anos</option>
+                    </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="turma-filter">Turma:</label>
+                <select id="turma-filter">
+                    <option value="">Selecione</option>
+                    </select>
+            </div>
+            <button id="apply-filters">Filtrar ✔</button>
+            <button id="clear-filters">Limpar Filtros</button> </section>
+
+        <section class="data-display">
+            <h2>Dados das Avaliações</h2>
+            <div id="top-scroll-container">
+                <div id="top-scroll-bar"></div>
+            </div>
+            
+            <div id="data-table-container">
+                <p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".</p>
+            </div>
+        </section>
+
+        <!-- Este é um comentário em HTML <section class="chart-display">
+            <h2>Gráfico de Média de Fluência 2021 por Escola</h2>
+            <div class="chart-container" style="max-width: 800px; margin: 20px auto;">
+                <canvas id="fluencia2021Chart"></canvas>
+            </div>
+        </section>
+    </main>-->
+
+    <footer>
+        <p>&copy; 2025 Dashboard de Avaliações</p>
+    </footer>
+
+    <div id="loading-indicator" style="display: none;">
+        <p>👨‍🎓 Carregando Dados... Por favor, aguarde!</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
