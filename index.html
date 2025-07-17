@@ -35,9 +35,9 @@
             </div>
             
             <div class="filter-group" id="nse-filter-group" style="display: none;">
-                <label for="nse-filter">Beneficiário de Progama Social:</label>
+                <label for="nse-filter">NSE:</label>
                 <select id="nse-filter">
-                    <option value="">Todos</option>
+                    <option value="">Todos os NSE</option>
                     </select>
             </div>
 
@@ -56,14 +56,14 @@
             </div>
 
             <div class="filter-group" id="transporte-filter-group" style="display: none;">
-                <label for="transporte-filter">Usuário do Transporte Escolar:</label>
+                <label for="transporte-filter">Transporte Escolar:</label>
                 <select id="transporte-filter">
-                    <option value="">Selecione</option>
+                    <option value="">Todos os Transportes</option>
                     </select>
             </div>
 
             <div class="filter-group">
-                <label for="year-filter">Etapa de Ensino:</label>
+                <label for="year-filter">Ano Letivo:</label>
                 <select id="year-filter">
                     <option value="">Todos os Anos</option>
                     </select>
@@ -72,11 +72,12 @@
             <div class="filter-group">
                 <label for="turma-filter">Turma:</label>
                 <select id="turma-filter">
-                    <option value="">Selecione</option>
+                    <option value="">Todas as Turmas</option>
                     </select>
             </div>
-            <button id="apply-filters">Filtrar ✔</button>
-            <button id="clear-filters">Limpar Filtros</button> </section>
+            <button id="apply-filters">Aplicar Filtros</button>
+            <button id="clear-filters">Limpar Filtros</button>
+        </section>
 
         <section class="data-display">
             <h2>Dados das Avaliações</h2>
@@ -85,24 +86,24 @@
             </div>
             
             <div id="data-table-container">
-                <p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Filtrar".</p>
+                <p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".</p>
             </div>
         </section>
 
-        <!-- Este é um comentário em HTML <section class="chart-display">
+        <section class="chart-display">
             <h2>Gráfico de Média de Fluência 2021 por Escola</h2>
             <div class="chart-container" style="max-width: 800px; margin: 20px auto;">
                 <canvas id="fluencia2021Chart"></canvas>
             </div>
         </section>
-    </main>-->
+    </main>
 
     <footer>
         <p>&copy; 2025 Dashboard de Avaliações</p>
     </footer>
 
     <div id="loading-indicator" style="display: none;">
-        <p>👨‍🎓 Carregando Dados... Por favor, aguarde!</p>
+        <p>📚 Carregando Conhecimento... Por favor, aguarde!</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>

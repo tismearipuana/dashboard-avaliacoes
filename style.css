@@ -2,38 +2,43 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 20px; /* Volta o padding original do body */
     background-color: #f4f7f6; /* Cor de fundo suave para o corpo */
     color: #333; /* Cor padrão do texto */
     line-height: 1.6; /* Espaçamento entre linhas para legibilidade */
+    
+    /* Remove estilos de grid ou flexbox do body se existiam para o layout de 3 colunas */
+    display: block; 
+    min-height: auto; 
 }
 
 /* Estilo para o cabeçalho (onde a arte/logo será exibida) */
 header {
-    background-color: transparent; /* Remove a cor de fundo sólida anterior */
-    color: #fff; /* Cor do texto no cabeçalho (pode não ser visível se a imagem preencher) */
-    padding: 10px 0; /* Espaçamento interno superior e inferior */
-    text-align: center; /* Centraliza o conteúdo (a imagem) */
-    border-radius: 0; /* Remove bordas arredondadas anteriores */
-    margin-bottom: 20px; /* Margem inferior para separar do conteúdo abaixo */
-    box-shadow: none; /* Remove qualquer sombra padrão se houver */
+    background-color: transparent; 
+    color: #fff; 
+    padding: 10px 0; 
+    text-align: center; 
+    border-radius: 0; 
+    margin-bottom: 20px; /* Volta a margem original do header */
+    box-shadow: none; 
 }
 
 /* Estilo para a imagem da logo dentro do cabeçalho */
 .header-logo {
-    max-width: 90%; /* Garante que a imagem não exceda 90% da largura do header */
-    height: auto; /* Mantém a proporção da imagem ao redimensionar */
-    display: block; /* Garante que a imagem se comporte como um bloco (sem espaços extras) */
-    margin: 0 auto; /* Centraliza a imagem horizontalmente dentro do header */
+    max-width: 90%; 
+    height: auto; 
+    display: block; 
+    margin: 0 auto; 
 }
 
 /* Estilos para títulos h1 e h2 */
 h1, h2 {
-    color: #2c3e50; /* Cor escura para os títulos */
-    text-align: center; /* Centraliza o texto dos títulos */
+    color: #2c3e50; 
+    text-align: center; 
 }
 
 /* Estilos para o container principal da página */
+/* Este era o antigo 'main', agora é novamente o container centralizado */
 main {
     max-width: 1200px; /* Largura máxima do conteúdo principal */
     margin: 20px auto; /* Centraliza o container principal na página */
@@ -41,276 +46,256 @@ main {
     background-color: #ffffff; /* Fundo branco para o conteúdo principal */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidade */
     border-radius: 8px; /* Cantos levemente arredondados */
+
+    /* Remove estilos relacionados ao layout de 3 colunas, se existiam aqui */
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
 }
+
+/* REMOVIDO: Estilos para #page-container, #content-wrapper, .sidebar, .partner-logo */
+/* Esses seletores e seus estilos foram removidos pois a estrutura HTML foi simplificada */
+
 
 /* Estilos para a seção de filtros */
 .filters {
-    display: flex; /* Usa Flexbox para organizar os filtros em linha */
-    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha em telas menores */
-    gap: 20px; /* Espaço entre os grupos de filtro */
-    justify-content: center; /* Centraliza os filtros horizontalmente */
-    align-items: flex-end; /* Alinha os itens pela parte inferior (para que labels e selects fiquem alinhados) */
-    margin-bottom: 30px; /* Margem inferior para separar da tabela */
-    padding: 20px; /* Espaçamento interno */
-    border: 1px solid #ddd; /* Borda sutil */
-    border-radius: 8px; /* Cantos arredondados */
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: center; 
+    align-items: flex-end; 
+    margin-bottom: 30px; 
+    padding: 20px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
     background-color: #eaf0f4; /* Fundo levemente azulado para a seção de filtros */
 }
 
 /* Estilos para cada grupo de filtro (label + select) */
 .filter-group {
-    display: flex; /* Usa Flexbox */
-    flex-direction: column; /* Coloca label em cima do select */
-    min-width: 180px; /* Garante uma largura mínima para cada filtro */
+    display: flex; 
+    flex-direction: column; 
+    min-width: 180px; 
 }
 
 /* Estilos para os rótulos dos filtros */
 .filters label {
-    margin-bottom: 8px; /* Espaço abaixo do rótulo */
-    font-weight: bold; /* Texto em negrito */
-    color: #555; /* Cor do texto */
+    margin-bottom: 8px; 
+    font-weight: bold; 
+    color: #555; 
 }
 
 /* Estilos para as caixas de seleção (select) e os botões */
 .filters select,
 .filters button {
-    padding: 10px 15px; /* Espaçamento interno */
-    border: 1px solid #ccc; /* Borda */
-    border-radius: 5px; /* Cantos arredondados */
-    font-size: 1rem; /* Tamanho da fonte */
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Sombra interna para dar profundidade */
+    padding: 10px 15px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    font-size: 1rem; 
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); 
 }
 
 /* Estilos específicos para as caixas de seleção */
 .filters select {
-    background-color: #fff; /* Fundo branco */
-    cursor: pointer; /* Cursor de mão ao passar por cima */
+    background-color: #fff; 
+    cursor: pointer; 
 }
 
 /* Estilos para o botão "Aplicar Filtros" */
 #apply-filters {
-    background-color: #3498db; /* Cor de fundo azul */
-    color: white; /* Cor do texto */
-    border: none; /* Sem borda */
-    cursor: pointer; /* Cursor de mão */
-    transition: background-color 0.3s ease; /* Transição suave de cor ao passar o mouse */
-    align-self: flex-end; /* Alinha o botão com a base dos selects no flexbox */
-    min-width: 150px; /* Largura mínima para o botão */
+    background-color: #3498db; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    align-self: flex-end; 
+    min-width: 150px; 
 }
 
 /* Efeito ao passar o mouse sobre o botão "Aplicar Filtros" */
 #apply-filters:hover {
-    background-color: #2980b9; /* Azul mais escuro ao passar o mouse */
+    background-color: #2980b9; 
 }
 
-/* NOVO: Estilos para o botão "Limpar Filtros" */
+/* Estilos para o botão "Limpar Filtros" */
 #clear-filters {
-    background-color: #e74c3c; /* Cor de fundo vermelha/laranja para "limpar" */
-    color: white; /* Cor do texto */
-    border: none; /* Sem borda */
-    cursor: pointer; /* Cursor de mão */
-    transition: background-color 0.3s ease; /* Transição suave de cor ao passar o mouse */
-    align-self: flex-end; /* Alinha o botão com os selects */
-    min-width: 150px; /* Largura mínima */
+    background-color: #e74c3c; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    align-self: flex-end; 
+    min-width: 150px; 
 }
 
 /* Efeito ao passar o mouse sobre o botão "Limpar Filtros" */
 #clear-filters:hover {
-    background-color: #c0392b; /* Vermelho mais escuro ao passar o mouse */
+    background-color: #c0392b; 
 }
 
 /* Estilos para a seção onde os dados da tabela serão exibidos */
 .data-display {
-    margin-top: 30px; /* Margem superior para separar dos filtros */
+    margin-top: 30px; 
 }
 
 /* ESTILOS PARA O CONTAINER DA BARRA DE ROLAGEM SUPERIOR */
 #top-scroll-container {
-    width: 100%; /* Ocupa toda a largura do seu pai */
-    overflow-x: scroll; /* Ativa a rolagem horizontal para este container */
-    overflow-y: hidden; /* Esconde a rolagem vertical (não queremos ela aqui) */
-    height: 15px; /* Altura visível da sua barra de rolagem superior */
-    margin-bottom: -15px; /* Compensa a altura da barra para que a tabela não fique afastada */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil para dar um relevo */
-    border-radius: 5px; /* Cantos arredondados */
-    background-color: #f0f0f0; /* Cor de fundo da trilha da barra (visível se não houver rolagem) */
+    width: 100%; 
+    overflow-x: scroll; 
+    overflow-y: hidden; 
+    height: 15px; 
+    margin-bottom: -15px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+    border-radius: 5px; 
+    background-color: #f0f0f0; 
     
-    /* PROPRIEDADES PARA TRAZER A BARRA PARA A FRENTE DA TABELA */
-    position: relative; /* Necessário para que z-index funcione */
-    z-index: 10;        /* Garante que esteja acima de outros elementos como a tabela */
+    position: relative; 
+    z-index: 10;        
 }
 
 #top-scroll-bar {
-    /* Esta div interna terá a largura total da tabela para forçar a rolagem do container pai */
-    height: 1px; /* Altura mínima para ser renderizada */
+    height: 1px; 
 }
 
-/* Estilos para o container principal da tabela de dados */
 #data-table-container {
-    overflow-x: auto; /* Mantém a rolagem horizontal automática para a tabela principal */
-    border: 1px solid #ddd; /* Borda sutil */
-    border-radius: 8px; /* Cantos arredondados */
-    padding: 15px; /* Espaçamento interno */
-    background-color: #fdfdfd; /* Fundo quase branco */
+    overflow-x: auto; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 15px; 
+    background-color: #fdfdfd; 
 }
 
-/* Estilos para a tabela */
 table {
-    width: 100%; /* Ocupa toda a largura disponível no container */
-    border-collapse: collapse; /* Remove espaços entre as bordas das células */
-    margin-top: 15px; /* Margem superior */
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
 }
 
-/* Estilos para cabeçalhos e células da tabela */
 table th, table td {
-    border: 1px solid #e0e0e0; /* Borda clara para as células */
-    padding: 12px 15px; /* Espaçamento interno */
-    text-align: left; /* Alinhamento do texto à esquerda */
-    white-space: nowrap; /* Impede que o texto quebre a linha na célula */
+    border: 1px solid #e0e0e0; 
+    padding: 12px 15px; 
+    text-align: left; 
+    white-space: nowrap; 
 }
 
-/* Estilos específicos para cabeçalhos da tabela */
 table th {
-    background-color: #f0f0f0; /* Fundo cinza claro */
-    font-weight: bold; /* Texto em negrito */
-    color: #444; /* Cor do texto */
+    background-color: #f0f0f0; 
+    font-weight: bold; 
+    color: #444; 
 }
 
-/* Estilos para linhas pares da tabela (para melhor leitura) */
 table tr:nth-child(even) {
-    background-color: #f9f9f9; /* Cor mais clara para linhas pares */
+    background-color: #f9f9f9; 
 }
 
-/* Efeito ao passar o mouse sobre as linhas da tabela */
 table tr:hover {
-    background-color: #f1f1f1; /* Destaca a linha ao passar o mouse */
+    background-color: #f1f1f1; 
 }
 
 /* Estilos para o rodapé da página */
 footer {
-    text-align: center; /* Centraliza o texto */
-    margin-top: 40px; /* Margem superior para separar do conteúdo */
-    padding: 20px; /* Espaçamento interno */
-    color: #777; /* Cor do texto */
-    font-size: 0.9rem; /* Tamanho da fonte */
-    border-top: 1px solid #eee; /* Borda superior sutil */
+    text-align: center; 
+    margin-top: 40px; /* Volta a margem original do footer */
+    padding: 20px; 
+    color: #777; 
+    font-size: 0.9rem; 
+    border-top: 1px solid #eee; 
 }
 
 /* Media Queries para responsividade (ajustes para telas menores) */
 @media (max-width: 768px) {
     .filters {
-        flex-direction: column; /* Filtros empilham verticalmente */
-        align-items: stretch; /* Ocupam a largura total */
+        flex-direction: column; 
+        align-items: stretch; 
     }
 
     .filter-group {
-        min-width: unset; /* Remove largura mínima em telas menores */
+        min-width: unset; 
     }
 
     .filters button {
-        align-self: stretch; /* Botão ocupa a largura total */
+        align-self: stretch; 
     }
 
     body {
-        padding: 10px; /* Diminui o padding do corpo */
+        padding: 10px; 
     }
 
     main {
-        padding: 15px; /* Diminui o padding do container principal */
+        padding: 15px; 
     }
 }
 
 /* --- Estilos para tornar a barra de rolagem visível e customizável (WebKit/Chrome/Safari) --- */
-
-/* Estiliza a barra de rolagem em si */
 #top-scroll-container::-webkit-scrollbar {
-    height: 12px; /* A altura da barra de rolagem horizontal */
+    height: 12px; 
 }
 
-/* Estiliza o "fundo" da barra de rolagem (a trilha) */
 #top-scroll-container::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Cor de fundo da trilha */
-    border-radius: 10px; /* Cantos arredondados para a trilha */
+    background: #f1f1f1; 
+    border-radius: 10px; 
 }
 
-/* Estiliza o "polegar" da barra de rolagem (o que você arrasta) */
 #top-scroll-container::-webkit-scrollbar-thumb {
-    background: #888; /* Cor do polegar */
-    border-radius: 10px; /* Cantos arredondados para o polegar */
+    background: #888; 
+    border-radius: 10px; 
 }
 
-/* Estiliza o polegar ao passar o mouse */
 #top-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Cor do polegar mais escura ao passar o mouse */
+    background: #555; 
 }
 
-/* Estilo para Firefox (Firefox 64+). Estilização mais limitada */
+/* Estilo para Firefox (Firefox 64+) */
 #top-scroll-container {
-    scrollbar-width: thin; /* 'auto' ou 'none' */
-    scrollbar-color: #888 #f1f1f1; /* polegar trilha */
+    scrollbar-width: thin; 
+    scrollbar-color: #888 #f1f1f1; 
 }
 
 
 /* --- Cores para Níveis de Classificação das Avaliações --- */
+.level-pre-leitor-1 { background-color: #fee2e2; color: #b91c1c; border-left: 4px solid #dc2626; } 
+.level-pre-leitor-2 { background-color: #fef3c7; color: #b45309; border-left: 4px solid #d97706; } 
+.level-pre-leitor-3 { background-color: #fef08a; color: #a16207; border-left: 4px solid #eab308; } 
+.level-pre-leitor-4 { background-color: #dbeafe; color: #2563eb; border-left: 4px solid #3b82f6; } 
+.level-pre-leitor-5 { background-color: #d1fae5; color: #047857; border-left: 4px solid #10b981; } 
+.level-pre-leitor-6 { background-color: #dcfce7; color: #16a34a; border-left: 4px solid #22c55e; } 
+.level-iniciante { background-color: #a7f3d0; color: #047857; border-left: 4px solid #059669; } 
+.level-fluente { background-color: #86efac; color: #15803d; border-left: 4px solid #22c55e; } 
+.level-sem-dados { background-color: #e5e7eb; color: #6b7280; border-left: 4px solid #9ca3af; } 
+.level-nao-se-aplica { background-color: #f3e8ff; color: #a855f7; border-left: 4px solid #c084fc; } 
 
-/* Níveis que exigem mais atenção / iniciais */
-.level-pre-leitor-1 { background-color: #fee2e2; color: #b91c1c; border-left: 4px solid #dc2626; } /* Vermelho claro */
-.level-pre-leitor-2 { background-color: #fef3c7; color: #b45309; border-left: 4px solid #d97706; } /* Laranja claro */
-.level-pre-leitor-3 { background-color: #fef08a; color: #a16207; border-left: 4px solid #eab308; } /* Amarelo */
-
-/* Níveis intermediários */
-.level-pre-leitor-4 { background-color: #dbeafe; color: #2563eb; border-left: 4px solid #3b82f6; } /* Azul claro */
-.level-pre-leitor-5 { background-color: #d1fae5; color: #047857; border-left: 4px solid #10b981; } /* Verde-água claro */
-.level-pre-leitor-6 { background-color: #dcfce7; color: #16a34a; border-left: 4px solid #22c55e; } /* Verde claro */
-
-/* Níveis avançados */
-.level-iniciante { background-color: #a7f3d0; color: #047857; border-left: 4px solid #059669; } /* Verde médio */
-.level-fluente { background-color: #86efac; color: #15803d; border-left: 4px solid #22c55e; } /* Verde forte */
-
-/* Outros estados */
-.level-sem-dados { background-color: #e5e7eb; color: #6b7280; border-left: 4px solid #9ca3af; } /* Cinza */
-.level-nao-se-aplica { background-color: #f3e8ff; color: #a855f7; border-left: 4px solid #c084fc; } /* Roxo claro, caso tenha 'N/A' ou algo assim */
-
-/* Ajuste para células de avaliação para ter um padding e centro */
 table td {
     vertical-align: middle;
-    text-align: center; /* Centraliza o texto */
-    padding: 8px 10px; /* Ajusta o padding para as cores aparecerem melhor */
-    font-weight: bold; /* Deixa o texto mais legível */
+    text-align: center; 
+    padding: 8px 10px; 
+    font-weight: bold; 
 }
 
-/* Garante que o padding nas THs não seja afetado demais */
 table th {
     padding: 12px 15px;
 }
 
 /* Estilos para o Indicador de Carregamento */
 #loading-indicator {
-    position: fixed; /* Fixa na tela, não rola com o conteúdo */
-    top: 50%; /* 50% do topo */
-    left: 50%; /* 50% da esquerda */
-    transform: translate(-50%, -50%); /* Centraliza o elemento exatamente */
-    background-color: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
-    padding: 30px 50px; /* Espaçamento interno */
-    border-radius: 10px; /* Cantos arredondados */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra para destacar */
-    z-index: 1000; /* Garante que fique acima de tudo */
-    text-align: center; /* Centraliza o texto */
-    font-size: 1.5rem; /* Tamanho da fonte maior */
-    color: #3498db; /* Cor do texto azul (tom educacional) */
-    font-weight: bold; /* Negrito */
-    border: 2px solid #3498db; /* Borda com a cor azul */
-    animation: pulse 1.5s infinite alternate; /* Animação de pulsar */
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background-color: rgba(255, 255, 255, 0.95); 
+    padding: 30px 50px; 
+    border-radius: 10px; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
+    z-index: 1000; 
+    text-align: center; 
+    font-size: 1.5rem; 
+    color: #3498db; 
+    font-weight: bold; 
+    border: 2px solid #3498db; 
+    animation: pulse 1.5s infinite alternate; 
 }
 
 /* Animação de pulsar para o indicador de carregamento */
 @keyframes pulse {
-    from {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-    to {
-        transform: translate(-50%, -50%) scale(1.05);
-        opacity: 0.9;
-    }
+    from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    to { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
 }
