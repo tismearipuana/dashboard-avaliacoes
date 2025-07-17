@@ -2,12 +2,11 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px; /* Volta o padding original do body */
+    padding: 20px;
     background-color: #f4f7f6; /* Cor de fundo suave para o corpo */
     color: #333; /* Cor padrão do texto */
     line-height: 1.6; /* Espaçamento entre linhas para legibilidade */
     
-    /* Remove estilos de grid ou flexbox do body se existiam para o layout de 3 colunas */
     display: block; 
     min-height: auto; 
 }
@@ -19,7 +18,7 @@ header {
     padding: 10px 0; 
     text-align: center; 
     border-radius: 0; 
-    margin-bottom: 20px; /* Volta a margem original do header */
+    margin-bottom: 20px; 
     box-shadow: none; 
 }
 
@@ -38,24 +37,18 @@ h1, h2 {
 }
 
 /* Estilos para o container principal da página */
-/* Este era o antigo 'main', agora é novamente o container centralizado */
 main {
-    max-width: 1200px; /* Largura máxima do conteúdo principal */
-    margin: 20px auto; /* Centraliza o container principal na página */
-    padding: 20px; /* Espaçamento interno */
-    background-color: #ffffff; /* Fundo branco para o conteúdo principal */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidade */
-    border-radius: 8px; /* Cantos levemente arredondados */
+    max-width: 1200px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px; 
 
-    /* Remove estilos relacionados ao layout de 3 colunas, se existiam aqui */
     display: block;
     grid-template-columns: none;
     gap: 0;
 }
-
-/* REMOVIDO: Estilos para #page-container, #content-wrapper, .sidebar, .partner-logo */
-/* Esses seletores e seus estilos foram removidos pois a estrutura HTML foi simplificada */
-
 
 /* Estilos para a seção de filtros */
 .filters {
@@ -68,7 +61,7 @@ main {
     padding: 20px; 
     border: 1px solid #ddd; 
     border-radius: 8px; 
-    background-color: #eaf0f4; /* Fundo levemente azulado para a seção de filtros */
+    background-color: #eaf0f4; 
 }
 
 /* Estilos para cada grupo de filtro (label + select) */
@@ -85,53 +78,52 @@ main {
     color: #555; 
 }
 
-/* Estilos para as caixas de seleção (select) e os botões */
+/* Estilos unificados para as caixas de seleção (select) e os botões */
 .filters select,
-.filters button {
+.filters button { /* Aplicado a ambos os botões agora */
     padding: 10px 15px; 
     border: 1px solid #ccc; 
     border-radius: 5px; 
     font-size: 1rem; 
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); 
+    height: 40px; /* Altura unificada */
+    align-self: flex-end; /* Alinha os botões com a base dos selects */
+    min-width: 150px; /* Largura mínima */
+    cursor: pointer; /* Cursor de mão */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transição suave */
 }
 
 /* Estilos específicos para as caixas de seleção */
 .filters select {
     background-color: #fff; 
-    cursor: pointer; 
 }
 
 /* Estilos para o botão "Aplicar Filtros" */
 #apply-filters {
-    background-color: #3498db; 
+    background-color: #0096C7; /* Azul */
     color: white; 
-    border: none; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
-    align-self: flex-end; 
-    min-width: 150px; 
+    border: 1px solid #0096C7; /* Borda da mesma cor */
 }
 
-/* Efeito ao passar o mouse sobre o botão "Aplicar Filtros" */
+/* Efeito ao passar o mouse sobre o botão "Aplicar Filtros" (tons mais suaves) */
 #apply-filters:hover {
-    background-color: #2980b9; 
+    background-color: #2980b9; /* Azul um pouco mais escuro */
+    border-color: #2980b9;
 }
 
 /* Estilos para o botão "Limpar Filtros" */
 #clear-filters {
-    background-color: #e74c3c; 
+    background-color: #e74c3c; /* Vermelho/laranja */
     color: white; 
-    border: none; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
-    align-self: flex-end; 
-    min-width: 150px; 
+    border: 1px solid #e74c3c; /* Borda da mesma cor */
 }
 
-/* Efeito ao passar o mouse sobre o botão "Limpar Filtros" */
+/* Efeito ao passar o mouse sobre o botão "Limpar Filtros" (tons mais suaves) */
 #clear-filters:hover {
-    background-color: #c0392b; 
+    background-color: #c0392b; /* Vermelho/laranja um pouco mais escuro */
+    border-color: #c0392b;
 }
+
 
 /* Estilos para a seção onde os dados da tabela serão exibidos */
 .data-display {
@@ -157,6 +149,7 @@ main {
     height: 1px; 
 }
 
+/* Estilos para o container principal da tabela de dados */
 #data-table-container {
     overflow-x: auto; 
     border: 1px solid #ddd; 
@@ -165,6 +158,27 @@ main {
     background-color: #fdfdfd; 
 }
 
+/* NOVO: Estilos para a mensagem "Nenhum dado carregado/encontrado" */
+.info-message {
+    padding: 20px;
+    background-color: #f8f8f8; /* Fundo cinza suave */
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espaço entre ícone e texto */
+}
+
+.info-message .icon {
+    font-size: 1.5rem; /* Tamanho do ícone */
+    color: #888; /* Cor do ícone */
+}
+
+/* Estilos para a tabela */
 table {
     width: 100%; 
     border-collapse: collapse; 
@@ -195,11 +209,11 @@ table tr:hover {
 /* Estilos para o rodapé da página */
 footer {
     text-align: center; 
-    margin-top: 40px; /* Volta a margem original do footer */
+    margin-top: 40px; 
     padding: 20px; 
-    color: #777; 
+    color: #999; /* Cinza mais claro */
     font-size: 0.9rem; 
-    border-top: 1px solid #eee; 
+    border-top: 1px solid #eee; /* Linha sutil acima */
 }
 
 /* Media Queries para responsividade (ajustes para telas menores) */

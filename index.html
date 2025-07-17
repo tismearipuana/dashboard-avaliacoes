@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Avaliações Escolares</title>
     <link rel="stylesheet" href="style.css">
+	<link rel="icon" href="favicon.png" type="image/png">
 </head>
 <body>
     <header>
@@ -86,24 +87,21 @@
             </div>
             
             <div id="data-table-container">
-                <p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".</p>
+                <div class="info-message no-data-message">
+                    <span class="icon">📭</span> Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".
+                </div>
             </div>
         </section>
 
-        <!--<section class="chart-display">
-            <h2>Gráfico de Média de Fluência 2021 por Escola</h2>
-            <div class="chart-container" style="max-width: 800px; margin: 20px auto;">
-                <canvas id="fluencia2021Chart"></canvas>
-            </div>
-        </section>-->
+        
     </main>
 
     <footer>
-        <p>&copy; 2025 Dashboard de Avaliações</p>
+        <p>&copy; 2025 Sistema de Avaliação Educacional | Desenvolvido por Secretaria Municipal de Educação de Aripuanã</p>
     </footer>
 
     <div id="loading-indicator" style="display: none;">
-        <p>📚 Carregando Conhecimento... Por favor, aguarde!</p>
+        <p>📚 Carregando Dados... Por favor, aguarde!</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>

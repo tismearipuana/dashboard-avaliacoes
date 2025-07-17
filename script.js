@@ -41,7 +41,6 @@ const loadingIndicator = document.getElementById('loading-indicator');
 // Define o cabeçalho da coluna do nome do aluno (AJUSTE SE O NOME NA SUA PLANILHA FOR DIFERENTE DE 'ALUNO')
 const studentNameHeader = 'ALUNO'; 
 
-
 // FUNÇÕES AUXILIARES - DEVEM ESTAR SEMPRE NO TOPO, APÓS AS CONSTS E ANTES DE SEREM CHAMADAS POR OUTRAS FUNÇÕES
 
 // Função auxiliar para converter uma string para o formato "Capitalize First Letter of Each Word"
@@ -74,116 +73,11 @@ function getLevelClassName(levelValue) {
     return ''; 
 }
 
-// Função para calcular a média da 'Avaliação de Fluência 2021' por 'ESCOLA'
-function calculateAverageFluenciaBySchool(data) {
-    const schoolData = {}; 
-
-    data.forEach(row => {
-        const school = row['ESCOLA'];
-        const fluenciaScore = row['Avaliação de Fluência 2021']; 
-
-        if (school && fluenciaScore) {
-            let scoreValue;
-            const preLeitorMatch = fluenciaScore.match(/Pré Leitor (\d+)/);
-            if (preLeitorMatch) {
-                scoreValue = parseInt(preLeitorMatch[1]); 
-            } else if (fluenciaScore.toLowerCase().includes('iniciante')) {
-                scoreValue = 7; 
-            } else if (fluenciaScore.toLowerCase().includes('fluente')) {
-                scoreValue = 8; 
-            } else {
-                scoreValue = 0; 
-            }
-            
-            if (!schoolData[school]) {
-                schoolData[school] = { total: 0, count: 0 };
-            }
-            schoolData[school].total += scoreValue;
-            schoolData[school].count += 1;
-        }
-    });
-
-    const labels = [];
-    const averages = [];
-
-    Object.keys(schoolData).sort().forEach(school => {
-        const avg = schoolData[school].count > 0 ? (schoolData[school].total / schoolData[school].count).toFixed(1) : 0;
-        labels.push(toTitleCase(school)); 
-        averages.push(avg);
-    });
-
-    return { labels, averages };
-}
-
-// Função para desenhar o gráfico de barras
-function drawFluencia2021Chart(data) {
-    const chartData = calculateAverageFluenciaBySchool(data);
-    const chartCanvas = document.getElementById('fluencia2021Chart');
-    
-    if (!chartData.labels.length || !chartCanvas) {
-        if (currentChart) {
-            currentChart.destroy();
-            currentChart = null;
-        }
-        return;
-    }
-
-    const ctx = chartCanvas.getContext('2d');
-
-    if (currentChart) {
-        currentChart.destroy();
-    }
-
-    currentChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.labels,
-            datasets: [{
-                label: 'Média de Avaliação de Fluência 2021', 
-                data: chartData.averages,
-                backgroundColor: 'rgba(54, 162, 235, 0.8)', 
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Média de Nível de Fluência'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Escola'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                title: {
-                    display: true,
-                    text: 'Média da Avaliação de Fluência 2021 por Escola' 
-                }
-            }
-        }
-    });
-}
-
-
 // FIM DAS FUNÇÕES AUXILIARES E DE GRÁFICO - COMEÇO DAS FUNÇÕES DE LÓGICA PRINCIPAL
 
 // Função para buscar e carregar os dados da planilha usando PapaParse
 async function loadGoogleSheetData() {
-    loadingIndicator.style.display = 'block'; // MOSTRA o indicador ao iniciar o carregamento
+    loadingIndicator.style.display = 'block'; 
     try {
         Papa.parse(GOOGLE_SHEET_CSV_URL, {
             download: true, 
@@ -192,7 +86,12 @@ async function loadGoogleSheetData() {
             complete: function(results) {
                 if (results.errors.length) {
                     console.error("Erros durante o parsing do CSV:", results.errors);
-                    dataTableContainer.innerHTML = `<p style="color: red;">Erro ao processar os dados da planilha. Detalhes: ${results.errors[0] ? results.errors[0].message : 'Erro desconhecido'}</p>`;
+                    // Mensagem de erro formatada
+                    dataTableContainer.innerHTML = `
+                        <div class="info-message error-message">
+                            <span class="icon">⚠️</span> Erro ao processar os dados da planilha. Por favor, verifique o link e o formato. Detalhes: ${results.errors[0] ? results.errors[0].message : 'Erro desconhecido'}
+                        </div>
+                    `;
                     loadingIndicator.style.display = 'none'; 
                     return;
                 }
@@ -203,13 +102,23 @@ async function loadGoogleSheetData() {
                 console.log("Dados carregados (PapaParse):", allData);
 
                 populateFilters(); 
-                dataTableContainer.innerHTML = '<p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".</p>'; 
+                // Mensagem inicial de "Nenhum dado carregado"
+                dataTableContainer.innerHTML = `
+                    <div class="info-message no-data-message">
+                        <span class="icon">📭</span> Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".
+                    </div>
+                `;
                 loadingIndicator.style.display = 'none'; 
             }
         });
     } catch (error) {
         console.error('Falha ao carregar a planilha:', error);
-        dataTableContainer.innerHTML = `<p style="color: red;">Erro ao carregar os dados. Por favor, verifique o link da planilha e a conexão com a internet. Detalhes: ${error.message}</p>`;
+        // Mensagem de erro de carregamento formatada
+        dataTableContainer.innerHTML = `
+            <div class="info-message error-message">
+                <span class="icon">❌</span> Erro ao carregar os dados. Verifique o link da planilha e a conexão. Detalhes: ${error.message}
+            </div>
+        `;
         loadingIndicator.style.display = 'none'; 
     }
 }
@@ -231,7 +140,7 @@ function populateFilters() {
 
     schoolFilter.innerHTML = '<option value="">Todas as Escolas</option>';
     turmaFilter.innerHTML = '<option value="">Todas as Turmas</option>';
-    yearFilter.innerHTML = '<option value="">Todos as Etapas</option>';
+    yearFilter.innerHTML = '<option value="">Todos os Anos</option>';
     evaluationFilter.innerHTML = '<option value="">Todas as Avaliações</option>';
     levelFilter.innerHTML = '<option value="">Todos os Níveis</option>'; 
 
@@ -289,10 +198,10 @@ function populateLevelFilter(evaluationColumnName) {
 // NOVA FUNÇÃO: Para mostrar/ocultar e popular os filtros demográficos
 function toggleAndPopulateDemographicFilters(show) {
     const filtersToToggle = [
-        { group: nseFilterGroup, select: nseFilter, header: 'NSE', defaultOption: 'Sim/Não' },
+        { group: nseFilterGroup, select: nseFilter, header: 'NSE', defaultOption: 'Todos os NSE' },
         { group: corRacaFilterGroup, select: corRacaFilter, header: 'COR/RAÇA', defaultOption: 'Todas as Cores/Raças' },
         { group: inclusaoFilterGroup, select: inclusaoFilter, header: 'INCLUSÃO', defaultOption: 'Todas as Inclusões' },
-        { group: transporteFilterGroup, select: transporteFilter, header: 'Transporte Escolar', defaultOption: 'Sim/Não' }
+        { group: transporteFilterGroup, select: transporteFilter, header: 'Transporte Escolar', defaultOption: 'Todos os Transportes' }
     ];
 
     filtersToToggle.forEach(filter => {
@@ -369,7 +278,12 @@ function applyFilters() {
 
     setTimeout(() => {
         if (filteredData.length === 0) {
-            dataTableContainer.innerHTML = '<p>Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".</p>';
+            // Mensagem "Nenhum dado encontrado" formatada
+            dataTableContainer.innerHTML = `
+                <div class="info-message no-data-message">
+                    <span class="icon">🔍</span> Nenhum dado encontrado para os filtros selecionados.
+                </div>
+            `;
             if (currentChart) {
                 currentChart.destroy(); 
                 currentChart = null;
@@ -438,7 +352,12 @@ function displayData(dataToDisplay, selectedEvaluation = '') {
     tableHTML += '</tr></thead><tbody>';
 
     if (dataToDisplay.length === 0) {
-        dataTableContainer.innerHTML = `<tr><td colspan="${displayHeaders.length + 1}">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
+        // Mensagem "Nenhum dado encontrado" formatada (usada também pelo applyFilters)
+        dataTableContainer.innerHTML = `
+            <div class="info-message no-data-message">
+                <span class="icon">🔍</span> Nenhum dado encontrado para os filtros selecionados.
+            </div>
+        `;
         topScrollContainer.style.display = 'none'; 
     } else {
         topScrollContainer.style.display = 'block'; 
