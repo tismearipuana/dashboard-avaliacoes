@@ -5,14 +5,12 @@ let allData = [];
 let filteredData = [];
 let headers = [];
 let currentChart = null;
-// NOVAS VARIÁVEIS GLOBAIS PARA CONTROLE DA CLASSIFICAÇÃO
 let sortColumn = null;
 let sortDirection = 'asc';
 
 // Referências aos elementos HTML
 const loadingIndicator = document.getElementById('loading-indicator');
 const dataTableContainer = document.getElementById('data-table-container');
-// ... (demais referências permanecem as mesmas)
 const schoolFilter = document.getElementById('school-filter');
 const evaluationFilter = document.getElementById('evaluation-filter');
 const yearFilter = document.getElementById('year-filter');
@@ -40,7 +38,7 @@ const topScrollBar = document.getElementById('top-scroll-bar');
 // Configuração
 const studentNameHeader = 'ALUNO'; 
 
-// DICIONÁRIOS DE CONFIGURAÇÃO (sem alterações)
+// DICIONÁRIOS DE CONFIGURAÇÃO
 const EVALUATION_SCORES = (() => {
     const fluencyScores = { 'Pré Leitor 1': 1, 'Pré Leitor 2': 2, 'Pré Leitor 3': 3, 'Pré Leitor 4': 4, 'Pré Leitor 5': 5, 'Pré Leitor 6': 6, 'Iniciante': 7, 'Fluente': 8, '_default': 0 };
     const performanceScores = { 'Abaixo do Básico': 1, 'Básico': 2, 'Proficiente': 3, 'Avançado': 4, '_default': 0 };
@@ -131,7 +129,6 @@ function populateFilters() {
     const turmas = [...new Set(allData.map(row => row['TURMA']))].filter(Boolean).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     const years = [...new Set(allData.map(row => row['ANO']))].filter(Boolean).sort();
     const evaluationNames = Object.keys(EVALUATION_SCORES).sort();
-
     const populateSelect = (selectEl, options, defaultText) => {
         selectEl.innerHTML = `<option value="">${defaultText}</option>`;
         options.forEach(opt => {
@@ -143,7 +140,6 @@ function populateFilters() {
             }
         });
     };
-    
     populateSelect(schoolFilter, schools, 'Todas as Escolas');
     populateSelect(turmaFilter, turmas, 'Todas as Turmas');
     populateSelect(yearFilter, years, 'Todos os Anos');
@@ -159,7 +155,6 @@ function updateDynamicFilters(evaluationHeader) {
         { group: inclusaoFilterGroup, select: inclusaoFilter, header: 'INCLUSÃO', default: 'Todas as Inclusões' },
         { group: transporteFilterGroup, select: transporteFilter, header: 'Transporte Escolar', default: 'Todos os Transportes' }
     ];
-
     filtersToPopulate.forEach(f => {
         if (f.values) {
             f.select.innerHTML = '<option value="">Todos os Níveis</option>';
@@ -190,10 +185,8 @@ function updateDynamicFilters(evaluationHeader) {
 
 function applyFilters() {
     loadingIndicator.style.display = 'block';
-    // Limpa a classificação anterior ao aplicar novos filtros
     sortColumn = null;
     sortDirection = 'asc';
-
     const selected = {
         school: schoolFilter.value,
         evaluation: evaluationFilter.value,
@@ -205,19 +198,16 @@ function applyFilters() {
         inclusao: inclusaoFilter.value,
         transporte: transporteFilter.value
     };
-
     let baseFilteredData = allData.filter(row => {
          const schoolMatch = !selected.school || row['ESCOLA'] === selected.school;
          const turmaMatch = !selected.turma || row['TURMA'] === selected.turma;
          const yearMatch = !selected.year || row['ANO'] === selected.year;
          return schoolMatch && turmaMatch && yearMatch;
     });
-
     filteredData = baseFilteredData;
     if (selected.evaluation) {
         filteredData = baseFilteredData.filter(row => row[selected.evaluation] && row[selected.evaluation].trim() !== '');
     }
-
     if (selected.level || selected.nse || selected.corRaca || selected.inclusao || selected.transporte) {
         filteredData = filteredData.filter(row => {
             const levelMatch = !selected.level || (row[selected.evaluation] && row[selected.evaluation].toLowerCase() === selected.level.toLowerCase());
@@ -228,7 +218,6 @@ function applyFilters() {
             return levelMatch && nseMatch && corRacaMatch && inclusaoMatch && transporteMatch;
         });
     }
-
     setTimeout(() => {
         const dataToShow = selected.evaluation ? filteredData : baseFilteredData;
         displayData(dataToShow, selected.evaluation);
@@ -238,24 +227,19 @@ function applyFilters() {
     }, 100);
 }
 
-// NOVA FUNÇÃO PARA CLASSIFICAR OS DADOS
 function sortData(column) {
     const dataToSort = evaluationFilter.value ? filteredData : allData;
-
     if (sortColumn === column) {
         sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
         sortColumn = column;
         sortDirection = 'asc';
     }
-
     const scoreRules = EVALUATION_SCORES[column];
-
     dataToSort.sort((a, b) => {
         const valueA = a[column] || '';
         const valueB = b[column] || '';
         let comparison = 0;
-
         if (scoreRules) {
             const scoreA = scoreRules[valueA] ?? -1;
             const scoreB = scoreRules[valueB] ?? -1;
@@ -263,10 +247,8 @@ function sortData(column) {
         } else {
             comparison = valueA.localeCompare(valueB);
         }
-
         return sortDirection === 'asc' ? comparison : -comparison;
     });
-
     displayData(dataToSort, evaluationFilter.value);
 }
 
@@ -276,7 +258,6 @@ function displayData(dataToDisplay, columnHeader) {
         summarySection.style.display = 'none';
         return;
     }
-    
     let orderedHeaders = ['ESCOLA', studentNameHeader];
     if (columnHeader) {
         orderedHeaders.push(columnHeader);
@@ -284,29 +265,23 @@ function displayData(dataToDisplay, columnHeader) {
     const remainingBase = ['ANO', 'TURMA'].filter(h => h !== columnHeader);
     const demographicHeaders = ['NSE', 'COR/RAÇA', 'INCLUSÃO', 'Transporte Escolar'];
     orderedHeaders.push(...remainingBase, ...demographicHeaders);
-
     if (!columnHeader) {
         const allEvaluationHeaders = Object.keys(EVALUATION_SCORES);
         orderedHeaders.push(...allEvaluationHeaders);
     }
-
     const displayHeaders = [...new Set(orderedHeaders)].filter(h => headers.includes(h));
-    
-    let tableHTML = '<table><thead><tr><th class="sortable" onclick="sortData(\'#\')">#</th>'; // # header also sortable if needed, though usually not. Let's make it sort by original index if we want.
+    let tableHTML = '<table><thead><tr><th>#</th>';
     displayHeaders.forEach(h => {
         let sortClass = 'sortable';
         if (h === sortColumn) {
             sortClass += sortDirection === 'asc' ? ' sorted-asc' : ' sorted-desc';
         }
-        // Adiciona o evento onclick e as classes para o cabeçalho
         tableHTML += `<th class="${sortClass}" onclick="sortData('${h}')">${toTitleCase(h)}</th>`;
     });
     tableHTML += '</tr></thead><tbody>';
-
     dataToDisplay.forEach((row, index) => {
         const levelValue = columnHeader ? row[columnHeader] : '';
         const rowClass = getLevelClassName(levelValue);
-
         tableHTML += `<tr class="${rowClass}"><td>${index + 1}</td>`;
         displayHeaders.forEach(header => {
             const cellValue = row[header] || ''; 
@@ -319,25 +294,30 @@ function displayData(dataToDisplay, columnHeader) {
     setupScrollSynchronization();
 }
 
-// ... (O restante do código, de displaySummaryStatistics em diante, permanece o mesmo) ...
 function displaySummaryStatistics(data, columnHeader) {
     if (!columnHeader || data.length === 0) {
         summarySection.style.display = 'none';
         return;
     }
     summarySection.style.display = 'flex';
-    
     const totalEvaluated = data.length;
     const levelCounts = data.reduce((acc, row) => {
         const level = row[columnHeader];
         acc[level] = (acc[level] || 0) + 1;
         return acc;
     }, {});
-
     totalCard.innerHTML = `<span class="value">${totalEvaluated}</span><span class="label">Total de Alunos Avaliados</span>`;
-
     if (totalEvaluated > 0) {
-        const sortedLevels = Object.keys(levelCounts).sort();
+        const scoreRules = EVALUATION_SCORES[columnHeader];
+        // ORDENAÇÃO CORRIGIDA AQUI
+        const sortedLevels = Object.keys(levelCounts).sort((a, b) => {
+            if (scoreRules) {
+                const scoreA = scoreRules[a] ?? 99;
+                const scoreB = scoreRules[b] ?? 99;
+                return scoreA - scoreB;
+            }
+            return a.localeCompare(b);
+        });
         let listItems = '';
         sortedLevels.forEach(level => {
             const count = levelCounts[level];
@@ -352,29 +332,33 @@ function displaySummaryStatistics(data, columnHeader) {
 
 function drawChart(data, columnHeader) {
     if (currentChart) currentChart.destroy();
-    
     if (data.length === 0 || !columnHeader) {
         chartCard.style.display = 'none';
         return;
     }
-
     const levelCounts = data.reduce((acc, row) => {
         const level = row[columnHeader];
         if (level && level.trim() !== '') { acc[level] = (acc[level] || 0) + 1; }
         return acc;
     }, {});
-
-    const labels = Object.keys(levelCounts).sort();
+    const scoreRules = EVALUATION_SCORES[columnHeader];
+    // ORDENAÇÃO CORRIGIDA AQUI TAMBÉM PARA O GRÁFICO
+    const labels = Object.keys(levelCounts).sort((a, b) => {
+        if (scoreRules) {
+            const scoreA = scoreRules[a] ?? 99;
+            const scoreB = scoreRules[b] ?? 99;
+            return scoreA - scoreB;
+        }
+        return a.localeCompare(b);
+    });
     if (labels.length === 0) {
         chartCard.style.display = 'none';
         return;
     }
     chartCard.style.display = 'flex';
-    
     const backgroundColors = labels.map(label => LEVEL_STYLES[label]?.color || '#CCCCCC');
     const chartData = labels.map(label => levelCounts[label]);
     const ctx = document.getElementById('fluenciaChart').getContext('2d');
-    
     currentChart = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -455,7 +439,6 @@ document.addEventListener('DOMContentLoaded', loadGoogleSheetData);
 applyFiltersButton.addEventListener('click', applyFilters);
 clearFiltersButton.addEventListener('click', clearFilters);
 exportCsvButton.addEventListener('click', exportDataToCSV);
-
 evaluationFilter.addEventListener('change', () => {
     updateDynamicFilters(evaluationFilter.value);
     applyFilters(); 
