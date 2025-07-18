@@ -10,6 +10,14 @@
 <body>
     <header>
         <img src="logos-header.png" alt="Logos da Dashboard de Avaliações" class="header-logo">
+        <div class="theme-switcher-container">
+            <span class="theme-icon">☀️</span> 
+            <label class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider"></span>
+            </label>
+            <span class="theme-icon">🌜</span>
+        </div>
     </header>
 
     <main>
@@ -20,63 +28,54 @@
                     <option value="">Todas as Escolas</option>
                 </select>
             </div>
-
             <div class="filter-group">
                 <label for="evaluation-filter">Avaliação:</label>
                 <select id="evaluation-filter">
                     <option value="">Todas as Avaliações</option>
                 </select>
             </div>
-
             <div class="filter-group" id="level-filter-group" style="display: none;">
                 <label for="level-filter">Nível/Classificação:</label>
                 <select id="level-filter">
                     <option value="">Todos os Níveis</option>
                 </select>
             </div>
-            
             <div class="filter-group" id="nse-filter-group" style="display: none;">
                 <label for="nse-filter">NSE:</label>
                 <select id="nse-filter">
                     <option value="">Todos os NSE</option>
                 </select>
             </div>
-
             <div class="filter-group" id="cor-raca-filter-group" style="display: none;">
                 <label for="cor-raca-filter">Cor/Raça:</label>
                 <select id="cor-raca-filter">
                     <option value="">Todas as Cores/Raças</option>
                 </select>
             </div>
-
             <div class="filter-group" id="inclusao-filter-group" style="display: none;">
                 <label for="inclusao-filter">Inclusão:</label>
                 <select id="inclusao-filter">
                     <option value="">Todas as Inclusões</option>
                 </select>
             </div>
-
             <div class="filter-group" id="transporte-filter-group" style="display: none;">
                 <label for="transporte-filter">Transporte Escolar:</label>
                 <select id="transporte-filter">
                     <option value="">Todos os Transportes</option>
                 </select>
             </div>
-
             <div class="filter-group">
                 <label for="year-filter">Ano Letivo:</label>
                 <select id="year-filter">
                     <option value="">Todos os Anos</option>
                 </select>
             </div>
-
             <div class="filter-group">
                 <label for="turma-filter">Turma:</label>
                 <select id="turma-filter">
                     <option value="">Todas as Turmas</option>
                 </select>
             </div>
-            
             <button id="apply-filters" aria-label="Aplicar filtros">Aplicar Filtros</button>
             <button id="clear-filters" aria-label="Limpar filtros">Limpar Filtros</button>
             <button id="export-csv" class="export-button" aria-label="Exportar para CSV">📤 Exportar para CSV</button>
@@ -96,16 +95,22 @@
         </section>
 
         <section class="data-display">
-            <h2>Dados Detalhados</h2>
+            <div class="data-display-header">
+                <h2>Dados Detalhados</h2>
+                <div class="search-container">
+                    <label for="student-search">Pesquisar Aluno:</label>
+                    <input type="text" id="student-search" placeholder="Filtrar por nome na tabela...">
+                </div>
+            </div>
             <div id="top-scroll-container">
                 <div id="top-scroll-bar"></div>
             </div>
-            
             <div id="data-table-container">
                 <div class="info-message no-data-message">
                     <span class="icon">📭</span> Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".
                 </div>
             </div>
+            <div id="pagination-controls" class="pagination-container"></div>
         </section>
         
     </main>
