@@ -38,7 +38,6 @@ const topScrollBar = document.getElementById('top-scroll-bar');
 // Configuração
 const studentNameHeader = 'ALUNO'; 
 
-// DICIONÁRIOS DE CONFIGURAÇÃO
 const EVALUATION_SCORES = (() => {
     const fluencyScores = { 'Pré Leitor 1': 1, 'Pré Leitor 2': 2, 'Pré Leitor 3': 3, 'Pré Leitor 4': 4, 'Pré Leitor 5': 5, 'Pré Leitor 6': 6, 'Iniciante': 7, 'Fluente': 8, '_default': 0 };
     const performanceScores = { 'Abaixo do Básico': 1, 'Básico': 2, 'Proficiente': 3, 'Avançado': 4, '_default': 0 };
@@ -46,7 +45,6 @@ const EVALUATION_SCORES = (() => {
     const mixedScoresNivel = { 'Nível 1': 1, 'Nível 2': 2, 'Nível 3': 3, 'Nível 4': 4, 'Iniciante': 5, 'Fluente': 6, '_default': 0 };
     const mixedScoresLeitor = { 'Leitor 1': 1, 'Leitor 2': 2, 'Leitor 3': 3, 'Leitor 4': 4, 'Iniciante': 5, 'Fluente': 6, '_default': 0 };
     const threePointScores = { 'Defasado': 1, 'Intermediário': 2, 'Adequado': 3, '_default': 0 };
-
     return {
         'Avaliação de Fluência 2021': fluencyScores, 'A. Somativa/LP/21': performanceScores, 'A. Somativa/Mat/21': performanceScores,
         'Avaliação de Fluência de Entrada 2022': fluencyScores, 'Avaliação de Fluência intermediária 2022': fluencyScores, 'Avaliação de Fluência de Saída 2022': fluencyScores,
@@ -96,6 +94,14 @@ function getLevelClassName(levelValue) {
     return style ? `level-default ${style.className}` : 'level-sem-dados';
 }
 
+function debounce(func, delay) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
 // --- LÓGICA PRINCIPAL ---
 async function loadGoogleSheetData() {
     loadingIndicator.style.display = 'block';
@@ -103,18 +109,24 @@ async function loadGoogleSheetData() {
         Papa.parse(GOOGLE_SHEET_CSV_URL, {
             download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
-                if (results.errors.length) {
-                    dataTableContainer.innerHTML = `<div class="info-message error-message">⚠️ Erro ao processar os dados.</div>`;
-                    return;
+                try {
+                    if (results.errors.length) {
+                        dataTableContainer.innerHTML = `<div class="info-message error-message">⚠️ Erro ao processar os dados da planilha.</div>`;
+                        return;
+                    }
+                    headers = results.meta.fields;
+                    allData = results.data.filter(row => row['ESCOLA'] && row['ESCOLA'].trim() !== '');
+                    populateFilters();
+                    dataTableContainer.innerHTML = `<div class="info-message">📭 Selecione os filtros e clique em "Aplicar Filtros".</div>`;
+                } catch (e) {
+                    console.error("Erro ao processar os dados:", e);
+                    dataTableContainer.innerHTML = `<div class="info-message error-message">⚠️ Ocorreu um erro inesperado ao processar os dados.</div>`;
+                } finally {
+                    loadingIndicator.style.display = 'none';
                 }
-                headers = results.meta.fields;
-                allData = results.data.filter(row => row['ESCOLA'] && row['ESCOLA'].trim() !== '');
-                populateFilters();
-                dataTableContainer.innerHTML = `<div class="info-message">📭 Selecione os filtros e clique em "Aplicar Filtros".</div>`;
-                loadingIndicator.style.display = 'none';
             },
             error: function() {
-                 dataTableContainer.innerHTML = `<div class="info-message error-message">❌ Erro ao carregar os dados.</div>`;
+                 dataTableContainer.innerHTML = `<div class="info-message error-message">❌ Falha ao carregar os dados da planilha. Verifique a conexão ou o link da URL.</div>`;
                  loadingIndicator.style.display = 'none';
             }
         });
@@ -262,7 +274,7 @@ function displayData(dataToDisplay, columnHeader) {
     if (columnHeader) {
         orderedHeaders.push(columnHeader);
     }
-    const remainingBase = ['ANO', 'TURMA'].filter(h => h !== columnHeader);
+    const remainingBase = ['ANO', 'TURMA'];
     const demographicHeaders = ['NSE', 'COR/RAÇA', 'INCLUSÃO', 'Transporte Escolar'];
     orderedHeaders.push(...remainingBase, ...demographicHeaders);
     if (!columnHeader) {
@@ -309,7 +321,6 @@ function displaySummaryStatistics(data, columnHeader) {
     totalCard.innerHTML = `<span class="value">${totalEvaluated}</span><span class="label">Total de Alunos Avaliados</span>`;
     if (totalEvaluated > 0) {
         const scoreRules = EVALUATION_SCORES[columnHeader];
-        // ORDENAÇÃO CORRIGIDA AQUI
         const sortedLevels = Object.keys(levelCounts).sort((a, b) => {
             if (scoreRules) {
                 const scoreA = scoreRules[a] ?? 99;
@@ -342,7 +353,6 @@ function drawChart(data, columnHeader) {
         return acc;
     }, {});
     const scoreRules = EVALUATION_SCORES[columnHeader];
-    // ORDENAÇÃO CORRIGIDA AQUI TAMBÉM PARA O GRÁFICO
     const labels = Object.keys(levelCounts).sort((a, b) => {
         if (scoreRules) {
             const scoreA = scoreRules[a] ?? 99;
@@ -439,7 +449,8 @@ document.addEventListener('DOMContentLoaded', loadGoogleSheetData);
 applyFiltersButton.addEventListener('click', applyFilters);
 clearFiltersButton.addEventListener('click', clearFilters);
 exportCsvButton.addEventListener('click', exportDataToCSV);
-evaluationFilter.addEventListener('change', () => {
+
+evaluationFilter.addEventListener('change', debounce(() => {
     updateDynamicFilters(evaluationFilter.value);
-    applyFilters(); 
-});
+    applyFilters();
+}, 300));

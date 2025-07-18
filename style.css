@@ -98,7 +98,7 @@ main {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-    align-items: stretch; /* Alinha os cards pela altura */
+    align-items: stretch;
 }
 .summary-card {
     background-color: #f8f9fa;
@@ -106,7 +106,7 @@ main {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    flex: 1 1 300px; /* Permite que os cards cresçam e encolham, com base de 300px */
+    flex: 1 1 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -136,12 +136,10 @@ main {
 .level-distribution-list li {
     padding: 4px 0;
 }
-
-/* Card específico para o gráfico */
 .summary-card.chart-card-container {
     border-left-color: #f39c12;
     padding: 15px;
-    min-height: 320px; /* Altura mínima para o gráfico */
+    min-height: 320px;
 }
 .chart-container {
     position: relative;
@@ -222,7 +220,7 @@ table th {
     z-index: 2;
 }
 
-/* --- NOVOS ESTILOS PARA CLASSIFICAÇÃO (SORTING) --- */
+/* ESTILOS PARA CLASSIFICAÇÃO (SORTING) */
 th.sortable {
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -242,20 +240,25 @@ th.sorted-desc::after {
     border-right: 5px solid transparent;
 }
 th.sorted-asc::after {
-    border-bottom: 5px solid #333; /* Seta para cima */
+    border-bottom: 5px solid #333;
 }
 th.sorted-desc::after {
-    border-top: 5px solid #333; /* Seta para baixo */
+    border-top: 5px solid #333;
 }
 
-
-/* Cores alternadas e hover APENAS em linhas sem classe de cor */
+/* Cores alternadas e hover */
 table tr:nth-child(even):not([class*="level-"]) td {
     background-color: #f9f9f9;
 }
-table tr:hover:not([class*="level-"]) td {
+table tr:not([class*="level-"]):hover td {
     background-color: #f1f1f1;
 }
+/* EFEITO HOVER PARA LINHAS JÁ COLORIDAS */
+table tr[class*="level-"]:hover td {
+    filter: brightness(90%);
+    transition: filter 0.2s ease;
+}
+
 
 /* CORES PARA AS LINHAS INTEIRAS DA TABELA */
 tr.level-default td { font-weight: bold; }
