@@ -18,70 +18,85 @@
                 <label for="school-filter">Escola:</label>
                 <select id="school-filter">
                     <option value="">Todas as Escolas</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group">
                 <label for="evaluation-filter">Avaliação:</label>
                 <select id="evaluation-filter">
                     <option value="">Todas as Avaliações</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group" id="level-filter-group" style="display: none;">
                 <label for="level-filter">Nível/Classificação:</label>
                 <select id="level-filter">
                     <option value="">Todos os Níveis</option>
-                    </select>
+                </select>
             </div>
             
             <div class="filter-group" id="nse-filter-group" style="display: none;">
                 <label for="nse-filter">NSE:</label>
                 <select id="nse-filter">
                     <option value="">Todos os NSE</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group" id="cor-raca-filter-group" style="display: none;">
                 <label for="cor-raca-filter">Cor/Raça:</label>
                 <select id="cor-raca-filter">
                     <option value="">Todas as Cores/Raças</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group" id="inclusao-filter-group" style="display: none;">
                 <label for="inclusao-filter">Inclusão:</label>
                 <select id="inclusao-filter">
                     <option value="">Todas as Inclusões</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group" id="transporte-filter-group" style="display: none;">
                 <label for="transporte-filter">Transporte Escolar:</label>
                 <select id="transporte-filter">
                     <option value="">Todos os Transportes</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group">
                 <label for="year-filter">Ano Letivo:</label>
                 <select id="year-filter">
                     <option value="">Todos os Anos</option>
-                    </select>
+                </select>
             </div>
 
             <div class="filter-group">
                 <label for="turma-filter">Turma:</label>
                 <select id="turma-filter">
                     <option value="">Todas as Turmas</option>
-                    </select>
+                </select>
             </div>
+            
             <button id="apply-filters">Aplicar Filtros</button>
             <button id="clear-filters">Limpar Filtros</button>
+            <button id="export-csv" class="export-button">Exportar para CSV</button>
+        </section>
+
+        <section id="summary-section" style="display: none;">
+            <h2>Resumo dos Dados Filtrados</h2>
+            <div class="summary-stats-container">
+                <div id="total-card" class="summary-card"></div>
+                <div id="dist-card" class="summary-card level-dist-card"></div>
+                <div id="chart-card" class="summary-card chart-card-container">
+                     <div class="chart-container">
+                        <canvas id="fluenciaChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="data-display">
-            <h2>Dados das Avaliações</h2>
+            <h2>Dados Detalhados</h2>
             <div id="top-scroll-container">
                 <div id="top-scroll-bar"></div>
             </div>
@@ -92,7 +107,6 @@
                 </div>
             </div>
         </section>
-
         
     </main>
 
@@ -105,6 +119,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

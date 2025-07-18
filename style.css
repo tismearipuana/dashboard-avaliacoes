@@ -3,313 +3,332 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f7f6; /* Cor de fundo suave para o corpo */
-    color: #333; /* Cor padrão do texto */
-    line-height: 1.6; /* Espaçamento entre linhas para legibilidade */
-    
-    display: block; 
-    min-height: auto; 
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Estilo para o cabeçalho (onde a arte/logo será exibida) */
+/* Estilo para o cabeçalho */
 header {
-    background-color: transparent; 
-    color: #fff; 
-    padding: 10px 0; 
-    text-align: center; 
-    border-radius: 0; 
-    margin-bottom: 20px; 
-    box-shadow: none; 
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Estilo para a imagem da logo dentro do cabeçalho */
 .header-logo {
-    max-width: 90%; 
-    height: auto; 
-    display: block; 
-    margin: 0 auto; 
+    max-width: 90%;
+    height: auto;
+    margin: 0 auto;
 }
 
-/* Estilos para títulos h1 e h2 */
+/* Estilos para títulos */
 h1, h2 {
-    color: #2c3e50; 
-    text-align: center; 
+    color: #2c3e50;
+    text-align: center;
 }
 
-/* Estilos para o container principal da página */
+/* Estilos para o container principal */
 main {
-    max-width: 1200px; 
-    margin: 20px auto; 
-    padding: 20px; 
-    background-color: #ffffff; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
-    border-radius: 8px; 
-
-    display: block;
-    grid-template-columns: none;
-    gap: 0;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 /* Estilos para a seção de filtros */
 .filters {
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 20px; 
-    justify-content: center; 
-    align-items: flex-end; 
-    margin-bottom: 30px; 
-    padding: 20px; 
-    border: 1px solid #ddd; 
-    border-radius: 8px; 
-    background-color: #eaf0f4; 
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #eaf0f4;
 }
 
-/* Estilos para cada grupo de filtro (label + select) */
 .filter-group {
-    display: flex; 
-    flex-direction: column; 
-    min-width: 180px; 
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
 }
 
-/* Estilos para os rótulos dos filtros */
 .filters label {
-    margin-bottom: 8px; 
-    font-weight: bold; 
-    color: #555; 
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
 }
 
-/* Estilos unificados para as caixas de seleção (select) e os botões */
 .filters select,
-.filters button { /* Aplicado a ambos os botões agora */
-    padding: 10px 15px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
-    font-size: 1rem; 
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); 
-    height: 40px; /* Altura unificada */
-    align-self: flex-end; /* Alinha os botões com a base dos selects */
-    min-width: 150px; /* Largura mínima */
-    cursor: pointer; /* Cursor de mão */
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transição suave */
+.filters button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    height: 40px;
+    align-self: flex-end;
+    min-width: 150px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Estilos específicos para as caixas de seleção */
 .filters select {
-    background-color: #fff; 
+    background-color: #fff;
 }
 
-/* Estilos para o botão "Aplicar Filtros" */
-#apply-filters {
-    background-color: #0096C7; /* Azul */
-    color: white; 
-    border: 1px solid #0096C7; /* Borda da mesma cor */
+#apply-filters { background-color: #0096C7; color: white; border-color: #0096C7; }
+#apply-filters:hover { background-color: #2980b9; border-color: #2980b9; }
+
+#clear-filters { background-color: #e74c3c; color: white; border-color: #e74c3c; }
+#clear-filters:hover { background-color: #c0392b; border-color: #c0392b; }
+
+.export-button { background-color: #27ae60; color: white; border-color: #27ae60; }
+.export-button:hover { background-color: #229954; border-color: #229954; }
+
+/* SEÇÃO DE RESUMO E GRÁFICO (UNIFICADOS) */
+#summary-section {
+    margin-bottom: 30px;
+}
+.summary-stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch; /* Alinha os cards pela altura */
+}
+.summary-card {
+    background-color: #f8f9fa;
+    border-left: 5px solid #0096C7;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    flex: 1 1 300px; /* Permite que os cards cresçam e encolham, com base de 300px */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.summary-card .value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    display: block;
+    text-align: center;
+}
+.summary-card .label {
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+}
+.summary-card.level-dist-card {
+    border-left-color: #27ae60;
+    justify-content: flex-start;
+}
+.level-distribution-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+    font-size: 0.95rem;
+}
+.level-distribution-list li {
+    padding: 4px 0;
 }
 
-/* Efeito ao passar o mouse sobre o botão "Aplicar Filtros" (tons mais suaves) */
-#apply-filters:hover {
-    background-color: #2980b9; /* Azul um pouco mais escuro */
-    border-color: #2980b9;
+/* Card específico para o gráfico */
+.summary-card.chart-card-container {
+    border-left-color: #f39c12;
+    padding: 15px;
+    min-height: 320px; /* Altura mínima para o gráfico */
 }
-
-/* Estilos para o botão "Limpar Filtros" */
-#clear-filters {
-    background-color: #e74c3c; /* Vermelho/laranja */
-    color: white; 
-    border: 1px solid #e74c3c; /* Borda da mesma cor */
-}
-
-/* Efeito ao passar o mouse sobre o botão "Limpar Filtros" (tons mais suaves) */
-#clear-filters:hover {
-    background-color: #c0392b; /* Vermelho/laranja um pouco mais escuro */
-    border-color: #c0392b;
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 
-/* Estilos para a seção onde os dados da tabela serão exibidos */
+/* Seção de exibição de dados */
 .data-display {
-    margin-top: 30px; 
+    margin-top: 30px;
 }
 
-/* ESTILOS PARA O CONTAINER DA BARRA DE ROLAGEM SUPERIOR */
 #top-scroll-container {
-    width: 100%; 
-    overflow-x: scroll; 
-    overflow-y: hidden; 
-    height: 15px; 
-    margin-bottom: -15px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-    border-radius: 5px; 
-    background-color: #f0f0f0; 
-    
-    position: relative; 
-    z-index: 10;        
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 15px;
+    margin-bottom: -15px;
+    position: relative;
+    z-index: 10;
 }
-
 #top-scroll-bar {
-    height: 1px; 
+    height: 1px;
 }
 
-/* Estilos para o container principal da tabela de dados */
 #data-table-container {
-    overflow-x: auto; 
-    border: 1px solid #ddd; 
-    border-radius: 8px; 
-    padding: 15px; 
-    background-color: #fdfdfd; 
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 600px; 
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fdfdfd;
 }
 
-/* NOVO: Estilos para a mensagem "Nenhum dado carregado/encontrado" */
 .info-message {
     padding: 20px;
-    background-color: #f8f8f8; /* Fundo cinza suave */
+    background-color: #f8f8f8;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     text-align: center;
     color: #666;
     font-size: 1.1rem;
-    display: flex; /* Para alinhar ícone e texto */
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Espaço entre ícone e texto */
+    gap: 10px;
 }
-
 .info-message .icon {
-    font-size: 1.5rem; /* Tamanho do ícone */
-    color: #888; /* Cor do ícone */
+    font-size: 1.5rem;
+}
+.info-message.error-message {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #b91c1c;
 }
 
-/* Estilos para a tabela */
+/* Estilos da Tabela */
 table {
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 15px; 
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
-
 table th, table td {
-    border: 1px solid #e0e0e0; 
-    padding: 12px 15px; 
-    text-align: left; 
-    white-space: nowrap; 
-}
-
-table th {
-    background-color: #f0f0f0; 
-    font-weight: bold; 
-    color: #444; 
-}
-
-table tr:nth-child(even) {
-    background-color: #f9f9f9; 
-}
-
-table tr:hover {
-    background-color: #f1f1f1; 
-}
-
-/* Estilos para o rodapé da página */
-footer {
-    text-align: center; 
-    margin-top: 40px; 
-    padding: 20px; 
-    color: #999; /* Cinza mais claro */
-    font-size: 0.9rem; 
-    border-top: 1px solid #eee; /* Linha sutil acima */
-}
-
-/* Media Queries para responsividade (ajustes para telas menores) */
-@media (max-width: 768px) {
-    .filters {
-        flex-direction: column; 
-        align-items: stretch; 
-    }
-
-    .filter-group {
-        min-width: unset; 
-    }
-
-    .filters button {
-        align-self: stretch; 
-    }
-
-    body {
-        padding: 10px; 
-    }
-
-    main {
-        padding: 15px; 
-    }
-}
-
-/* --- Estilos para tornar a barra de rolagem visível e customizável (WebKit/Chrome/Safari) --- */
-#top-scroll-container::-webkit-scrollbar {
-    height: 12px; 
-}
-
-#top-scroll-container::-webkit-scrollbar-track {
-    background: #f1f1f1; 
-    border-radius: 10px; 
-}
-
-#top-scroll-container::-webkit-scrollbar-thumb {
-    background: #888; 
-    border-radius: 10px; 
-}
-
-#top-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: #555; 
-}
-
-/* Estilo para Firefox (Firefox 64+) */
-#top-scroll-container {
-    scrollbar-width: thin; 
-    scrollbar-color: #888 #f1f1f1; 
-}
-
-
-/* --- Cores para Níveis de Classificação das Avaliações --- */
-.level-pre-leitor-1 { background-color: #fee2e2; color: #b91c1c; border-left: 4px solid #dc2626; } 
-.level-pre-leitor-2 { background-color: #fef3c7; color: #b45309; border-left: 4px solid #d97706; } 
-.level-pre-leitor-3 { background-color: #fef08a; color: #a16207; border-left: 4px solid #eab308; } 
-.level-pre-leitor-4 { background-color: #dbeafe; color: #2563eb; border-left: 4px solid #3b82f6; } 
-.level-pre-leitor-5 { background-color: #d1fae5; color: #047857; border-left: 4px solid #10b981; } 
-.level-pre-leitor-6 { background-color: #dcfce7; color: #16a34a; border-left: 4px solid #22c55e; } 
-.level-iniciante { background-color: #a7f3d0; color: #047857; border-left: 4px solid #059669; } 
-.level-fluente { background-color: #86efac; color: #15803d; border-left: 4px solid #22c55e; } 
-.level-sem-dados { background-color: #e5e7eb; color: #6b7280; border-left: 4px solid #9ca3af; } 
-.level-nao-se-aplica { background-color: #f3e8ff; color: #a855f7; border-left: 4px solid #c084fc; } 
-
-table td {
-    vertical-align: middle;
-    text-align: center; 
-    padding: 8px 10px; 
-    font-weight: bold; 
-}
-
-table th {
+    border: 1px solid #e0e0e0;
     padding: 12px 15px;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #444;
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
-/* Estilos para o Indicador de Carregamento */
+/* --- NOVOS ESTILOS PARA CLASSIFICAÇÃO (SORTING) --- */
+th.sortable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+th.sortable:hover {
+    background-color: #dcdcdc;
+}
+th.sorted-asc::after,
+th.sorted-desc::after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+th.sorted-asc::after {
+    border-bottom: 5px solid #333; /* Seta para cima */
+}
+th.sorted-desc::after {
+    border-top: 5px solid #333; /* Seta para baixo */
+}
+
+
+/* Cores alternadas e hover APENAS em linhas sem classe de cor */
+table tr:nth-child(even):not([class*="level-"]) td {
+    background-color: #f9f9f9;
+}
+table tr:hover:not([class*="level-"]) td {
+    background-color: #f1f1f1;
+}
+
+/* CORES PARA AS LINHAS INTEIRAS DA TABELA */
+tr.level-default td { font-weight: bold; }
+tr.level-pre-leitor-1 td, tr.level-abaixo-do-basico td { background-color: #B00020; color: white; }
+tr.level-pre-leitor-2 td { background-color: #C62828; color: white; }
+tr.level-pre-leitor-3 td { background-color: #E53935; color: white; }
+tr.level-pre-leitor-4 td { background-color: #F9A825; color: black; }
+tr.level-pre-leitor-5 td { background-color: #FDD835; color: black; }
+tr.level-pre-leitor-6 td { background-color: #D4E157; color: black; }
+tr.level-basico td { background-color: #F4C542; color: black; }
+tr.level-proficiente td { background-color: #43A047; color: white; }
+tr.level-avancado td { background-color: #2E7D32; color: white; }
+tr.level-iniciante-green td { background-color: #43A047; color: white; }
+tr.level-fluente-green td { background-color: #2E7D32; color: white; }
+tr.level-muito-baixo td { background-color: #C62828; color: white; }
+tr.level-baixo td { background-color: #EF6C00; color: white; }
+tr.level-medio td { background-color: #FBC02D; color: black; }
+tr.level-alto td { background-color: #2E7D32; color: white; }
+tr.level-nivel-1 td { background-color: #B71C1C; color: white; }
+tr.level-nivel-2 td { background-color: #F57C00; color: white; }
+tr.level-nivel-3 td { background-color: #FBC02D; color: black; }
+tr.level-nivel-4 td { background-color: #2E7D32; color: white; }
+tr.level-iniciante-blue-1 td { background-color: #039BE5; color: white; }
+tr.level-fluente-blue-1 td { background-color: #1565C0; color: white; }
+tr.level-leitor-1 td { background-color: #C62828; color: white; }
+tr.level-leitor-2 td { background-color: #EF6C00; color: white; }
+tr.level-leitor-3 td { background-color: #FDD835; color: black; }
+tr.level-leitor-4 td { background-color: #43A047; color: white; }
+tr.level-iniciante-blue-2 td { background-color: #29B6F6; color: black; }
+tr.level-fluente-blue-2 td { background-color: #1E88E5; color: white; }
+tr.level-defasado td { background-color: #D32F2F; color: white; }
+tr.level-intermediario td { background-color: #FFB300; color: black; }
+tr.level-adequado td { background-color: #388E3C; color: white; }
+tr.level-sem-dados td { background-color: #e5e7eb; color: #6b7280; }
+tr.level-nao-se-aplica td { background-color: #f3e8ff; color: #a855f7; }
+
+/* Rodapé */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: #999;
+    font-size: 0.9rem;
+    border-top: 1px solid #eee;
+}
+
+/* Indicador de Carregamento */
 #loading-indicator {
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    background-color: rgba(255, 255, 255, 0.95); 
-    padding: 30px 50px; 
-    border-radius: 10px; 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
-    z-index: 1000; 
-    text-align: center; 
-    font-size: 1.5rem; 
-    color: #3498db; 
-    font-weight: bold; 
-    border: 2px solid #3498db; 
-    animation: pulse 1.5s infinite alternate; 
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px 50px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #3498db;
+    font-weight: bold;
+    border: 2px solid #3498db;
+    animation: pulse 1.5s infinite alternate;
 }
-
-/* Animação de pulsar para o indicador de carregamento */
 @keyframes pulse {
     from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     to { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    main { padding: 15px; }
+    .filters { flex-direction: column; align-items: stretch; }
+    .filter-group { min-width: unset; }
+    .filters button { align-self: stretch; }
 }

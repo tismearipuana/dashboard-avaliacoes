@@ -1,23 +1,24 @@
-// **LINK ATUALIZADO DA SUA PLANILHA DO GOOGLE SHEETS (PUBLICADA EM CSV)**
+// **LINK DA SUA PLANILHA DO GOOGLE SHEETS (PUBLICADA EM CSV)**
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQAz9Zj5zdAT5quPMUmWcp_5nqtptO54j2UIKsj5HLdrygI27XqkeB_MXjiyZLrOKkt2btLptyUtz2B/pub?output=csv';
 
-let allData = []; // Armazena todos os dados da planilha
-let headers = []; // Armazena os cabeçalhos das colunas
-let currentChart = null; // Variável para armazenar a instância do gráfico (para destruí-lo antes de recriar)
+let allData = [];
+let filteredData = [];
+let headers = [];
+let currentChart = null;
+// NOVAS VARIÁVEIS GLOBAIS PARA CONTROLE DA CLASSIFICAÇÃO
+let sortColumn = null;
+let sortDirection = 'asc';
 
-// Referências aos elementos HTML dos filtros e da área de exibição
+// Referências aos elementos HTML
+const loadingIndicator = document.getElementById('loading-indicator');
+const dataTableContainer = document.getElementById('data-table-container');
+// ... (demais referências permanecem as mesmas)
 const schoolFilter = document.getElementById('school-filter');
 const evaluationFilter = document.getElementById('evaluation-filter');
 const yearFilter = document.getElementById('year-filter');
 const turmaFilter = document.getElementById('turma-filter');
-const applyFiltersButton = document.getElementById('apply-filters');
-const dataTableContainer = document.getElementById('data-table-container');
-
-// Referências para o filtro de Nível/Classificação
 const levelFilterGroup = document.getElementById('level-filter-group'); 
 const levelFilter = document.getElementById('level-filter'); 
-
-// NOVAS REFERÊNCIAS PARA OS FILTROS DEMOGRÁFICOS
 const nseFilterGroup = document.getElementById('nse-filter-group');
 const nseFilter = document.getElementById('nse-filter');
 const corRacaFilterGroup = document.getElementById('cor-raca-filter-group');
@@ -26,557 +27,436 @@ const inclusaoFilterGroup = document.getElementById('inclusao-filter-group');
 const inclusaoFilter = document.getElementById('inclusao-filter');
 const transporteFilterGroup = document.getElementById('transporte-filter-group');
 const transporteFilter = document.getElementById('transporte-filter');
-
-// NOVAS REFERÊNCIAS para a barra de rolagem superior
+const applyFiltersButton = document.getElementById('apply-filters');
+const clearFiltersButton = document.getElementById('clear-filters');
+const exportCsvButton = document.getElementById('export-csv');
+const summarySection = document.getElementById('summary-section');
+const totalCard = document.getElementById('total-card');
+const distCard = document.getElementById('dist-card');
+const chartCard = document.getElementById('chart-card');
 const topScrollContainer = document.getElementById('top-scroll-container');
 const topScrollBar = document.getElementById('top-scroll-bar');
 
-// Referência para o botão "Limpar Filtros"
-const clearFiltersButton = document.getElementById('clear-filters');
-
-// NOVA REFERÊNCIA para o indicador de carregamento
-const loadingIndicator = document.getElementById('loading-indicator');
-
-
-// Define o cabeçalho da coluna do nome do aluno (AJUSTE SE O NOME NA SUA PLANILHA FOR DIFERENTE DE 'ALUNO')
+// Configuração
 const studentNameHeader = 'ALUNO'; 
 
-// FUNÇÕES AUXILIARES - DEVEM ESTAR SEMPRE NO TOPO, APÓS AS CONSTS E ANTES DE SEREM CHAMADAS POR OUTRAS FUNÇÕES
+// DICIONÁRIOS DE CONFIGURAÇÃO (sem alterações)
+const EVALUATION_SCORES = (() => {
+    const fluencyScores = { 'Pré Leitor 1': 1, 'Pré Leitor 2': 2, 'Pré Leitor 3': 3, 'Pré Leitor 4': 4, 'Pré Leitor 5': 5, 'Pré Leitor 6': 6, 'Iniciante': 7, 'Fluente': 8, '_default': 0 };
+    const performanceScores = { 'Abaixo do Básico': 1, 'Básico': 2, 'Proficiente': 3, 'Avançado': 4, '_default': 0 };
+    const performanceScores2 = { 'Muito Baixo': 1, 'Baixo': 2, 'Médio': 3, 'Alto': 4, '_default': 0 };
+    const mixedScoresNivel = { 'Nível 1': 1, 'Nível 2': 2, 'Nível 3': 3, 'Nível 4': 4, 'Iniciante': 5, 'Fluente': 6, '_default': 0 };
+    const mixedScoresLeitor = { 'Leitor 1': 1, 'Leitor 2': 2, 'Leitor 3': 3, 'Leitor 4': 4, 'Iniciante': 5, 'Fluente': 6, '_default': 0 };
+    const threePointScores = { 'Defasado': 1, 'Intermediário': 2, 'Adequado': 3, '_default': 0 };
 
-// Função auxiliar para converter uma string para o formato "Capitalize First Letter of Each Word"
+    return {
+        'Avaliação de Fluência 2021': fluencyScores, 'A. Somativa/LP/21': performanceScores, 'A. Somativa/Mat/21': performanceScores,
+        'Avaliação de Fluência de Entrada 2022': fluencyScores, 'Avaliação de Fluência intermediária 2022': fluencyScores, 'Avaliação de Fluência de Saída 2022': fluencyScores,
+        'Avaliação Formativa Processual/LP/2022': performanceScores2, 'Avaliação Formativa Processual/mat/2022': performanceScores2,
+        'A. Somativa/LP/22': performanceScores, 'A. Somativa/Mat/22': performanceScores, 'Avaliação de fLuência de Entrada/2023': mixedScoresNivel,
+        'Avaliação de Fluência Formativa/2023': mixedScoresNivel, 'Avaliação de Fluência de Saída/2023': mixedScoresNivel,
+        'Avaliação Formativa Diagnóstica/LP/2023': performanceScores2, 'Avaliação Formativa Diagnóstica/Mat/2023': performanceScores2,
+        'Avaliação Formativa Processual/LP/23': performanceScores2, 'Avaliação Formativa Processual/Mat/23': performanceScores2,
+        'A. Somativa/LP/23': performanceScores2, 'A. Somativa/Mat/23': performanceScores2, 'Avaliação Formativa Diagnóstica/LP/2024': performanceScores2,
+        'Avaliação Formativa Diagnóstica/Mat/2024': performanceScores2, 'Avaliação Formativa Processual/LP/2024': performanceScores2,
+        'Avaliação Formativa Processual/Mat/2024': performanceScores2, 'Avaliação de Fluência 2024': mixedScoresLeitor,
+        'Avaliação Somativa Lingua Portuguesa 2024': performanceScores, 'Avaliação Somativa Matemática 2024': performanceScores,
+        'Avaliação de Fluência de Saída/2024': mixedScoresNivel, 'Avaliação de Fluência de Entrada/2025': mixedScoresLeitor,
+        'Diagnóstica Matemática 2025': threePointScores, 'Diagnóstica Língua Portuguesa 2025': threePointScores
+    };
+})();
+
+const LEVEL_STYLES = {
+    'Pré Leitor 1': { color: '#B00020', className: 'level-pre-leitor-1' }, 'Pré Leitor 2': { color: '#C62828', className: 'level-pre-leitor-2' },
+    'Pré Leitor 3': { color: '#E53935', className: 'level-pre-leitor-3' }, 'Pré Leitor 4': { color: '#F9A825', className: 'level-pre-leitor-4' },
+    'Pré Leitor 5': { color: '#FDD835', className: 'level-pre-leitor-5' }, 'Pré Leitor 6': { color: '#D4E157', className: 'level-pre-leitor-6' },
+    'Abaixo do Básico': { color: '#B00020', className: 'level-abaixo-do-basico' }, 'Básico': { color: '#F4C542', className: 'level-basico' },
+    'Proficiente': { color: '#43A047', className: 'level-proficiente' }, 'Avançado': { color: '#2E7D32', className: 'level-avancado' },
+    'Muito Baixo': { color: '#C62828', className: 'level-muito-baixo' }, 'Baixo': { color: '#EF6C00', className: 'level-baixo' },
+    'Médio': { color: '#FBC02D', className: 'level-medio' }, 'Alto': { color: '#2E7D32', className: 'level-alto' },
+    'Nível 1': { color: '#B71C1C', className: 'level-nivel-1' }, 'Nível 2': { color: '#F57C00', className: 'level-nivel-2' },
+    'Nível 3': { color: '#FBC02D', className: 'level-nivel-3' }, 'Nível 4': { color: '#2E7D32', className: 'level-nivel-4' },
+    'Leitor 1': { color: '#C62828', className: 'level-leitor-1' }, 'Leitor 2': { color: '#EF6C00', className: 'level-leitor-2' },
+    'Leitor 3': { color: '#FDD835', className: 'level-leitor-3' }, 'Leitor 4': { color: '#43A047', className: 'level-leitor-4' },
+    'Defasado': { color: '#D32F2F', className: 'level-defasado' }, 'Intermediário': { color: '#FFB300', className: 'level-intermediario' },
+    'Adequado': { color: '#388E3C', className: 'level-adequado' },
+    'Iniciante': { color: '#29B6F6', className: 'level-iniciante-blue-2' }, 'Fluente': { color: '#1E88E5', className: 'level-fluente-blue-2' }
+};
+
+// --- FUNÇÕES AUXILIARES ---
 function toTitleCase(str) {
-    if (!str) return '';
+    if (!str || typeof str !== 'string') return '';
     return str.toLowerCase().split(' ').map(word => {
-        if (['de', 'da', 'do', 'dos', 'das', 'e', 'em', 'com', 'para'].includes(word)) {
-            return word;
-        }
+        if (['de', 'da', 'do', 'dos', 'das', 'e', 'a', 'o'].includes(word)) return word;
         return word.charAt(0).toUpperCase() + word.slice(1);
     }).join(' ');
 }
 
-// Função auxiliar para mapear o nível de classificação para uma classe CSS de cor
 function getLevelClassName(levelValue) {
-    if (typeof levelValue !== 'string') return ''; 
-
-    const lowerCaseLevel = levelValue.trim().toLowerCase(); 
-
-    if (lowerCaseLevel.includes('pré leitor 1')) return 'level-pre-leitor-1';
-    if (lowerCaseLevel.includes('pré leitor 2')) return 'level-pre-leitor-2';
-    if (lowerCaseLevel.includes('pré leitor 3')) return 'level-pre-leitor-3';
-    if (lowerCaseLevel.includes('pré leitor 4')) return 'level-pre-leitor-4';
-    if (lowerCaseLevel.includes('pré leitor 5')) return 'level-pre-leitor-5';
-    if (lowerCaseLevel.includes('pré leitor 6')) return 'level-pre-leitor-6';
-    if (lowerCaseLevel.includes('iniciante')) return 'level-iniciante';
-    if (lowerCaseLevel.includes('fluente')) return 'level-fluente';
-    if (lowerCaseLevel.includes('sem dados') || lowerCaseLevel.includes('não se aplica') || lowerCaseLevel === '') return 'level-sem-dados'; 
-    
-    return ''; 
+    if (!levelValue) return 'level-sem-dados';
+    const style = LEVEL_STYLES[levelValue.trim()];
+    return style ? `level-default ${style.className}` : 'level-sem-dados';
 }
 
-// FIM DAS FUNÇÕES AUXILIARES E DE GRÁFICO - COMEÇO DAS FUNÇÕES DE LÓGICA PRINCIPAL
-
-// Função para buscar e carregar os dados da planilha usando PapaParse
+// --- LÓGICA PRINCIPAL ---
 async function loadGoogleSheetData() {
-    loadingIndicator.style.display = 'block'; 
+    loadingIndicator.style.display = 'block';
     try {
         Papa.parse(GOOGLE_SHEET_CSV_URL, {
-            download: true, 
-            header: true,   
-            skipEmptyLines: true, 
+            download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
                 if (results.errors.length) {
-                    console.error("Erros durante o parsing do CSV:", results.errors);
-                    // Mensagem de erro formatada
-                    dataTableContainer.innerHTML = `
-                        <div class="info-message error-message">
-                            <span class="icon">⚠️</span> Erro ao processar os dados da planilha. Por favor, verifique o link e o formato. Detalhes: ${results.errors[0] ? results.errors[0].message : 'Erro desconhecido'}
-                        </div>
-                    `;
-                    loadingIndicator.style.display = 'none'; 
+                    dataTableContainer.innerHTML = `<div class="info-message error-message">⚠️ Erro ao processar os dados.</div>`;
                     return;
                 }
-                headers = results.meta.fields; 
-                allData = results.data.filter(row => row['ESCOLA'] && row['ANO'] && row['TURMA']);
-
-                console.log("Cabeçalhos detectados (PapaParse):", headers);
-                console.log("Dados carregados (PapaParse):", allData);
-
-                populateFilters(); 
-                // Mensagem inicial de "Nenhum dado carregado"
-                dataTableContainer.innerHTML = `
-                    <div class="info-message no-data-message">
-                        <span class="icon">📭</span> Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".
-                    </div>
-                `;
-                loadingIndicator.style.display = 'none'; 
+                headers = results.meta.fields;
+                allData = results.data.filter(row => row['ESCOLA'] && row['ESCOLA'].trim() !== '');
+                populateFilters();
+                dataTableContainer.innerHTML = `<div class="info-message">📭 Selecione os filtros e clique em "Aplicar Filtros".</div>`;
+                loadingIndicator.style.display = 'none';
+            },
+            error: function() {
+                 dataTableContainer.innerHTML = `<div class="info-message error-message">❌ Erro ao carregar os dados.</div>`;
+                 loadingIndicator.style.display = 'none';
             }
         });
     } catch (error) {
-        console.error('Falha ao carregar a planilha:', error);
-        // Mensagem de erro de carregamento formatada
-        dataTableContainer.innerHTML = `
-            <div class="info-message error-message">
-                <span class="icon">❌</span> Erro ao carregar os dados. Verifique o link da planilha e a conexão. Detalhes: ${error.message}
-            </div>
-        `;
-        loadingIndicator.style.display = 'none'; 
+        console.error('Erro geral:', error);
+        loadingIndicator.style.display = 'none';
     }
 }
 
-// Função para preencher os filtros de Escola, Ano, Turma e Avaliação
 function populateFilters() {
-    const schools = [...new Set(allData.map(row => row['ESCOLA']))].sort(); 
-    const turmas = [...new Set(allData.map(row => row['TURMA']))].sort((a, b) => a.localeCompare(b));
-    const years = [...new Set(allData.map(row => row['ANO']))].sort((a, b) => {
-        const numA = parseInt(a.replace(/[^\d]/g, '')); 
-        const numB = parseInt(b.replace(/[^\d]/g, ''));
-        if (!isNaN(numA) && !isNaN(numB)) { return numA - numB; }
-        return a.localeCompare(b); 
-    });
+    const schools = [...new Set(allData.map(row => row['ESCOLA']))].sort();
+    const turmas = [...new Set(allData.map(row => row['TURMA']))].filter(Boolean).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    const years = [...new Set(allData.map(row => row['ANO']))].filter(Boolean).sort();
+    const evaluationNames = Object.keys(EVALUATION_SCORES).sort();
 
-    const evaluationHeaders = headers.filter(header =>
-        header.includes('Avaliação') || header.includes('Somativa') || header.includes('Diagnóstica') || header.includes('Processual') || header.includes('Fluência')
-    ).sort();
-
-    schoolFilter.innerHTML = '<option value="">Todas as Escolas</option>';
-    turmaFilter.innerHTML = '<option value="">Todas as Turmas</option>';
-    yearFilter.innerHTML = '<option value="">Todos os Anos</option>';
-    evaluationFilter.innerHTML = '<option value="">Todas as Avaliações</option>';
-    levelFilter.innerHTML = '<option value="">Todos os Níveis</option>'; 
-
-    schools.forEach(school => { if (school) { const option = document.createElement('option'); option.value = school; option.textContent = toTitleCase(school); schoolFilter.appendChild(option); } });
-    turmas.forEach(turma => { if (turma) { const option = document.createElement('option'); option.value = turma; option.textContent = turma; turmaFilter.appendChild(option); } });
-    years.forEach(year => { if (year) { const option = document.createElement('option'); option.value = year; option.textContent = year; yearFilter.appendChild(option); } });
-    
-    evaluationHeaders.forEach(evalHeader => { 
-        if (evalHeader) { 
-            const option = document.createElement('option'); 
-            option.value = evalHeader; 
-            option.textContent = toTitleCase(evalHeader); 
-            evaluationFilter.appendChild(option); 
-        } 
-    });
-
-    levelFilterGroup.style.display = 'none';
-    nseFilterGroup.style.display = 'none';
-    corRacaFilterGroup.style.display = 'none';
-    inclusaoFilterGroup.style.display = 'none';
-    transporteFilterGroup.style.display = 'none';
-}
-
-// Função para preencher o filtro de Nível/Classificação dinamicamente
-function populateLevelFilter(evaluationColumnName) {
-    levelFilter.innerHTML = '<option value="">Todos os Níveis</option>'; 
-
-    if (evaluationColumnName && allData.length > 0) {
-        const levels = [...new Set(allData.map(row => row[evaluationColumnName]))]
-            .filter(level => level !== undefined && level !== null && level.trim() !== '') 
-            .sort((a, b) => {
-                const order = ['Pré Leitor 1', 'Pré Leitor 2', 'Pré Leitor 3', 'Pré Leitor 4', 'Pré Leitor 5', 'Pré Leitor 6', 'Iniciante', 'Fluente', 'Sem dados'];
-                const indexA = order.indexOf(a); 
-                const indexB = order.indexOf(b); 
-
-                if (indexA === -1 && indexB === -1) return a.localeCompare(b); 
-                if (indexA === -1) return 1; 
-                if (indexB === -1) return -1; 
-
-                return indexA - indexB; 
-            });
-
-        levels.forEach(level => {
-            const option = document.createElement('option');
-            option.value = level; 
-            option.textContent = toTitleCase(level); 
-            levelFilter.appendChild(option);
+    const populateSelect = (selectEl, options, defaultText) => {
+        selectEl.innerHTML = `<option value="">${defaultText}</option>`;
+        options.forEach(opt => {
+            if (opt) {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                selectEl.appendChild(option);
+            }
         });
-        levelFilterGroup.style.display = 'block'; 
-    } else {
-        levelFilterGroup.style.display = 'none'; 
-    }
+    };
+    
+    populateSelect(schoolFilter, schools, 'Todas as Escolas');
+    populateSelect(turmaFilter, turmas, 'Todas as Turmas');
+    populateSelect(yearFilter, years, 'Todos os Anos');
+    populateSelect(evaluationFilter, evaluationNames, 'Todas as Avaliações');
 }
 
-// NOVA FUNÇÃO: Para mostrar/ocultar e popular os filtros demográficos
-function toggleAndPopulateDemographicFilters(show) {
-    const filtersToToggle = [
-        { group: nseFilterGroup, select: nseFilter, header: 'NSE', defaultOption: 'Todos os NSE' },
-        { group: corRacaFilterGroup, select: corRacaFilter, header: 'COR/RAÇA', defaultOption: 'Todas as Cores/Raças' },
-        { group: inclusaoFilterGroup, select: inclusaoFilter, header: 'INCLUSÃO', defaultOption: 'Todas as Inclusões' },
-        { group: transporteFilterGroup, select: transporteFilter, header: 'Transporte Escolar', defaultOption: 'Todos os Transportes' }
+function updateDynamicFilters(evaluationHeader) {
+    const showDemographic = evaluationHeader !== "";
+    const filtersToPopulate = [
+        { group: levelFilterGroup, select: levelFilter, values: evaluationHeader ? [...new Set(allData.map(row => row[evaluationHeader]))].filter(Boolean).sort() : [] },
+        { group: nseFilterGroup, select: nseFilter, header: 'NSE', default: 'Todos os NSE' },
+        { group: corRacaFilterGroup, select: corRacaFilter, header: 'COR/RAÇA', default: 'Todas as Cores/Raças' },
+        { group: inclusaoFilterGroup, select: inclusaoFilter, header: 'INCLUSÃO', default: 'Todas as Inclusões' },
+        { group: transporteFilterGroup, select: transporteFilter, header: 'Transporte Escolar', default: 'Todos os Transportes' }
     ];
 
-    filtersToToggle.forEach(filter => {
-        if (show && headers.includes(filter.header)) { 
-            filter.group.style.display = 'block';
-            filter.select.innerHTML = `<option value="">${filter.defaultOption}</option>`; 
-
-            const uniqueValues = [...new Set(allData.map(row => row[filter.header]))]
-                .filter(value => value !== undefined && value !== null && value.trim() !== '')
-                .sort((a, b) => a.localeCompare(b));
-
-            uniqueValues.forEach(value => {
+    filtersToPopulate.forEach(f => {
+        if (f.values) {
+            f.select.innerHTML = '<option value="">Todos os Níveis</option>';
+            f.values.forEach(val => {
                 const option = document.createElement('option');
-                option.value = value; 
-                option.textContent = toTitleCase(value); 
-                filter.select.appendChild(option);
+                option.value = val;
+                option.textContent = toTitleCase(val);
+                f.select.appendChild(option);
             });
+            f.group.style.display = f.values.length > 0 ? 'block' : 'none';
         } else {
-            filter.group.style.display = 'none'; 
-            filter.select.innerHTML = `<option value="">${filter.defaultOption}</option>`; 
+            if (showDemographic && headers.includes(f.header)) {
+                const values = [...new Set(allData.map(row => row[f.header]))].filter(Boolean).sort();
+                f.select.innerHTML = `<option value="">${f.default}</option>`;
+                values.forEach(val => {
+                    const option = document.createElement('option');
+                    option.value = val;
+                    option.textContent = toTitleCase(val);
+                    f.select.appendChild(option);
+                });
+                f.group.style.display = 'block';
+            } else {
+                f.group.style.display = 'none';
+            }
         }
     });
 }
 
-
-// Função para filtrar e exibir os dados com base em todas as seleções
 function applyFilters() {
-    loadingIndicator.style.display = 'block'; 
+    loadingIndicator.style.display = 'block';
+    // Limpa a classificação anterior ao aplicar novos filtros
+    sortColumn = null;
+    sortDirection = 'asc';
 
-    const selectedSchool = schoolFilter.value;
-    const selectedEvaluation = evaluationFilter.value;
-    const selectedTurma = turmaFilter.value;
-    const selectedYear = yearFilter.value;
-    const selectedLevel = levelFilter.value; 
-    const selectedNse = nseFilter.value;
-    const selectedCorRaca = corRacaFilter.value;
-    const selectedInclusao = inclusaoFilter.value;
-    const selectedTransporte = transporteFilter.value;
+    const selected = {
+        school: schoolFilter.value,
+        evaluation: evaluationFilter.value,
+        turma: turmaFilter.value,
+        year: yearFilter.value,
+        level: levelFilter.value,
+        nse: nseFilter.value,
+        corRaca: corRacaFilter.value,
+        inclusao: inclusaoFilter.value,
+        transporte: transporteFilter.value
+    };
 
+    let baseFilteredData = allData.filter(row => {
+         const schoolMatch = !selected.school || row['ESCOLA'] === selected.school;
+         const turmaMatch = !selected.turma || row['TURMA'] === selected.turma;
+         const yearMatch = !selected.year || row['ANO'] === selected.year;
+         return schoolMatch && turmaMatch && yearMatch;
+    });
 
-    let filteredData = allData;
+    filteredData = baseFilteredData;
+    if (selected.evaluation) {
+        filteredData = baseFilteredData.filter(row => row[selected.evaluation] && row[selected.evaluation].trim() !== '');
+    }
 
-    const anyFilterSelected = selectedSchool || selectedEvaluation || selectedTurma || selectedYear ||
-                              selectedLevel || selectedNse || selectedCorRaca || selectedInclusao || selectedTransporte;
-
-    if (anyFilterSelected) { 
-        if (selectedSchool) {
-            filteredData = filteredData.filter(row => row['ESCOLA'] === selectedSchool); 
-        }
-        if (selectedTurma) {
-            filteredData = filteredData.filter(row => row['TURMA'] === selectedTurma);
-        }
-        if (selectedYear) {
-            filteredData = filteredData.filter(row => row['ANO'] === selectedYear);
-        }
-        if (selectedEvaluation && selectedLevel) { 
-            filteredData = filteredData.filter(row => row[selectedEvaluation] === selectedLevel); 
-        }
-        if (selectedNse) {
-            filteredData = filteredData.filter(row => row['NSE'] === selectedNse); 
-        }
-        if (selectedCorRaca) {
-            filteredData = filteredData.filter(row => row['COR/RAÇA'] === selectedCorRaca); 
-        }
-        if (selectedInclusao) {
-            filteredData = filteredData.filter(row => row['INCLUSÃO'] === selectedInclusao); 
-        }
-        if (selectedTransporte) {
-            filteredData = filteredData.filter(row => row['Transporte Escolar'] === selectedTransporte); 
-        }
-    } else {
-        filteredData = [];
+    if (selected.level || selected.nse || selected.corRaca || selected.inclusao || selected.transporte) {
+        filteredData = filteredData.filter(row => {
+            const levelMatch = !selected.level || (row[selected.evaluation] && row[selected.evaluation].toLowerCase() === selected.level.toLowerCase());
+            const nseMatch = !selected.nse || (row['NSE'] && row['NSE'].toLowerCase() === selected.nse.toLowerCase());
+            const corRacaMatch = !selected.corRaca || (row['COR/RAÇA'] && row['COR/RAÇA'].toLowerCase() === selected.corRaca.toLowerCase());
+            const inclusaoMatch = !selected.inclusao || (row['INCLUSÃO'] && row['INCLUSÃO'].toLowerCase() === selected.inclusao.toLowerCase());
+            const transporteMatch = !selected.transporte || (row['Transporte Escolar'] && row['Transporte Escolar'].toLowerCase() === selected.transporte.toLowerCase());
+            return levelMatch && nseMatch && corRacaMatch && inclusaoMatch && transporteMatch;
+        });
     }
 
     setTimeout(() => {
-        if (filteredData.length === 0) {
-            // Mensagem "Nenhum dado encontrado" formatada
-            dataTableContainer.innerHTML = `
-                <div class="info-message no-data-message">
-                    <span class="icon">🔍</span> Nenhum dado encontrado para os filtros selecionados.
-                </div>
-            `;
-            if (currentChart) {
-                currentChart.destroy(); 
-                currentChart = null;
-            }
-            topScrollContainer.style.display = 'none'; 
-        } else {
-            displayData(filteredData, selectedEvaluation); 
-            drawFluencia2021Chart(filteredData); 
-        }
-        loadingIndicator.style.display = 'none'; 
-    }, 100); 
+        const dataToShow = selected.evaluation ? filteredData : baseFilteredData;
+        displayData(dataToShow, selected.evaluation);
+        displaySummaryStatistics(filteredData, selected.evaluation);
+        drawChart(filteredData, selected.evaluation);
+        loadingIndicator.style.display = 'none';
+    }, 100);
 }
 
-// Função para exibir os dados em uma tabela HTML
-function displayData(dataToDisplay, selectedEvaluation = '') {
-    let tableHTML = '<table><thead><tr>';
+// NOVA FUNÇÃO PARA CLASSIFICAR OS DADOS
+function sortData(column) {
+    const dataToSort = evaluationFilter.value ? filteredData : allData;
 
-    let displayHeaders = [];
-
-    if (selectedEvaluation) {
-        const specificEvalHeaders = ['ESCOLA', studentNameHeader, 'ANO', 'TURMA', 'NSECOR/RAÇAINCLUSÃO', 'NSE', 'COR/RAÇA', 'INCLUSÃO', 'Transporte Escolar', selectedEvaluation];
-        
-        displayHeaders = specificEvalHeaders.filter(h => headers.includes(h)); 
+    if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-        const preferredOrderBase = ['ESCOLA', studentNameHeader, 'ANO', 'TURMA', 'NSECOR/RAÇAINCLUSÃO', 'NSE', 'COR/RAÇA', 'INCLUSÃO', 'Transporte Escolar'];
-        
-        const irrelevantHeaders = [
-            'MÃEINEPCOD', 
-            'CÓDIGO',      
-            'INEP',        
-            'Data de Nascimento',
-            'Frequência',
-        ];
-
-        let otherHeaders = headers.filter(header =>
-            !preferredOrderBase.includes(header) &&
-            !irrelevantHeaders.includes(header) &&
-            !(header.includes('Avaliação') || header.includes('Somativa') || header.includes('Diagnóstica') || header.includes('Processual') || header.includes('Fluência'))
-        ).sort((a, b) => a.localeCompare(b)); 
-
-        const evaluationHeadersSorted = headers.filter(header =>
-            header.includes('Avaliação') || header.includes('Somativa') || header.includes('Diagnóstica') || header.includes('Processual') || header.includes('Fluência')
-        ).sort((a, b) => {
-            const yearMatchA = a.match(/\d{4}/);
-            const yearA = yearMatchA ? parseInt(yearMatchA[0]) : 0;
-            const yearMatchB = b.match(/\d{4}/);
-            const yearB = yearMatchB ? parseInt(yearMatchB[0]) : 0;
-
-            if (yearA !== yearB) { return yearA - yearB; }
-            return a.localeCompare(b);
-        });
-
-        displayHeaders = [
-            ...preferredOrderBase.filter(h => headers.includes(h)), 
-            ...otherHeaders, 
-            ...evaluationHeadersSorted 
-        ];
+        sortColumn = column;
+        sortDirection = 'asc';
     }
 
-    displayHeaders = [...new Set(displayHeaders)]; 
+    const scoreRules = EVALUATION_SCORES[column];
 
-    tableHTML += '<th>#</th>';
-    displayHeaders.forEach(header => {
-        tableHTML += `<th>${toTitleCase(header)}</th>`;
+    dataToSort.sort((a, b) => {
+        const valueA = a[column] || '';
+        const valueB = b[column] || '';
+        let comparison = 0;
+
+        if (scoreRules) {
+            const scoreA = scoreRules[valueA] ?? -1;
+            const scoreB = scoreRules[valueB] ?? -1;
+            comparison = scoreA - scoreB;
+        } else {
+            comparison = valueA.localeCompare(valueB);
+        }
+
+        return sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    displayData(dataToSort, evaluationFilter.value);
+}
+
+function displayData(dataToDisplay, columnHeader) {
+    if (dataToDisplay.length === 0) {
+        dataTableContainer.innerHTML = `<div class="info-message">🔍 Nenhum dado encontrado.</div>`;
+        summarySection.style.display = 'none';
+        return;
+    }
+    
+    let orderedHeaders = ['ESCOLA', studentNameHeader];
+    if (columnHeader) {
+        orderedHeaders.push(columnHeader);
+    }
+    const remainingBase = ['ANO', 'TURMA'].filter(h => h !== columnHeader);
+    const demographicHeaders = ['NSE', 'COR/RAÇA', 'INCLUSÃO', 'Transporte Escolar'];
+    orderedHeaders.push(...remainingBase, ...demographicHeaders);
+
+    if (!columnHeader) {
+        const allEvaluationHeaders = Object.keys(EVALUATION_SCORES);
+        orderedHeaders.push(...allEvaluationHeaders);
+    }
+
+    const displayHeaders = [...new Set(orderedHeaders)].filter(h => headers.includes(h));
+    
+    let tableHTML = '<table><thead><tr><th class="sortable" onclick="sortData(\'#\')">#</th>'; // # header also sortable if needed, though usually not. Let's make it sort by original index if we want.
+    displayHeaders.forEach(h => {
+        let sortClass = 'sortable';
+        if (h === sortColumn) {
+            sortClass += sortDirection === 'asc' ? ' sorted-asc' : ' sorted-desc';
+        }
+        // Adiciona o evento onclick e as classes para o cabeçalho
+        tableHTML += `<th class="${sortClass}" onclick="sortData('${h}')">${toTitleCase(h)}</th>`;
     });
     tableHTML += '</tr></thead><tbody>';
 
-    if (dataToDisplay.length === 0) {
-        // Mensagem "Nenhum dado encontrado" formatada (usada também pelo applyFilters)
-        dataTableContainer.innerHTML = `
-            <div class="info-message no-data-message">
-                <span class="icon">🔍</span> Nenhum dado encontrado para os filtros selecionados.
-            </div>
-        `;
-        topScrollContainer.style.display = 'none'; 
-    } else {
-        topScrollContainer.style.display = 'block'; 
-        dataToDisplay.forEach((row, index) => {
-            tableHTML += '<tr>';
-            tableHTML += `<td>${index + 1}</td>`;
-            displayHeaders.forEach(header => {
-                let cellValue = row[header] || ''; 
-                let cellClass = '';
+    dataToDisplay.forEach((row, index) => {
+        const levelValue = columnHeader ? row[columnHeader] : '';
+        const rowClass = getLevelClassName(levelValue);
 
-                if (cellValue === '') {
-                    cellValue = 'Não se Aplica';
-                }
-
-                const allEvaluationHeaders = headers.filter(h => h.includes('Avaliação') || h.includes('Somativa') || h.includes('Diagnóstica') || h.includes('Processual') || h.includes('Fluência'));
-                
-                if (header === 'ANO' || header === 'TURMA') {
-                    cellValue = cellValue; 
-                } else if (!isNaN(cellValue) && cellValue !== '') {
-                    cellValue = cellValue; 
-                } else {
-                    cellValue = toTitleCase(cellValue); 
-                }
-
-                if (allEvaluationHeaders.includes(header)) {
-                    cellClass = getLevelClassName(cellValue);
-                }
-                
-                tableHTML += `<td class="${cellClass}">${cellValue}</td>`; 
-            });
-            tableHTML += '</tr>';
+        tableHTML += `<tr class="${rowClass}"><td>${index + 1}</td>`;
+        displayHeaders.forEach(header => {
+            const cellValue = row[header] || ''; 
+            tableHTML += `<td>${toTitleCase(cellValue)}</td>`;
         });
-    }
-
+        tableHTML += '</tr>';
+    });
     tableHTML += '</tbody></table>';
-    dataTableContainer.innerHTML = tableHTML; 
-
+    dataTableContainer.innerHTML = tableHTML;
     setupScrollSynchronization();
 }
 
-// Função para configurar a sincronização da rolagem
+// ... (O restante do código, de displaySummaryStatistics em diante, permanece o mesmo) ...
+function displaySummaryStatistics(data, columnHeader) {
+    if (!columnHeader || data.length === 0) {
+        summarySection.style.display = 'none';
+        return;
+    }
+    summarySection.style.display = 'flex';
+    
+    const totalEvaluated = data.length;
+    const levelCounts = data.reduce((acc, row) => {
+        const level = row[columnHeader];
+        acc[level] = (acc[level] || 0) + 1;
+        return acc;
+    }, {});
+
+    totalCard.innerHTML = `<span class="value">${totalEvaluated}</span><span class="label">Total de Alunos Avaliados</span>`;
+
+    if (totalEvaluated > 0) {
+        const sortedLevels = Object.keys(levelCounts).sort();
+        let listItems = '';
+        sortedLevels.forEach(level => {
+            const count = levelCounts[level];
+            const percentage = ((count / totalEvaluated) * 100).toFixed(1);
+            listItems += `<li><strong>${toTitleCase(level)}:</strong> ${count} (${percentage}%)</li>`;
+        });
+        distCard.innerHTML = `<span class="label">Distribuição</span><ul class="level-distribution-list">${listItems}</ul>`;
+    } else {
+        distCard.innerHTML = `<span class="label">Distribuição</span><ul class="level-distribution-list"><li>Nenhum aluno avaliado.</li></ul>`;
+    }
+}
+
+function drawChart(data, columnHeader) {
+    if (currentChart) currentChart.destroy();
+    
+    if (data.length === 0 || !columnHeader) {
+        chartCard.style.display = 'none';
+        return;
+    }
+
+    const levelCounts = data.reduce((acc, row) => {
+        const level = row[columnHeader];
+        if (level && level.trim() !== '') { acc[level] = (acc[level] || 0) + 1; }
+        return acc;
+    }, {});
+
+    const labels = Object.keys(levelCounts).sort();
+    if (labels.length === 0) {
+        chartCard.style.display = 'none';
+        return;
+    }
+    chartCard.style.display = 'flex';
+    
+    const backgroundColors = labels.map(label => LEVEL_STYLES[label]?.color || '#CCCCCC');
+    const chartData = labels.map(label => levelCounts[label]);
+    const ctx = document.getElementById('fluenciaChart').getContext('2d');
+    
+    currentChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels.map(toTitleCase),
+            datasets: [{
+                label: 'Número de Alunos', data: chartData,
+                backgroundColor: backgroundColors,
+                borderColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: `Distribuição por Nível` },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.chart.getDatasetMeta(0).total;
+                            const percentage = ((context.raw / total) * 100).toFixed(1);
+                            return `${context.label}: ${context.raw} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function clearFilters() {
+    schoolFilter.value = '';
+    evaluationFilter.value = '';
+    yearFilter.value = '';
+    turmaFilter.value = '';
+    updateDynamicFilters('');
+    levelFilter.value = '';
+    nseFilter.value = '';
+    corRacaFilter.value = '';
+    inclusaoFilter.value = '';
+    transporteFilter.value = '';
+    filteredData = [];
+    dataTableContainer.innerHTML = `<div class="info-message">📭 Selecione os filtros e clique em "Aplicar Filtros".</div>`;
+    summarySection.style.display = 'none';
+}
+
+function exportDataToCSV() {
+    const dataToExport = filteredData.length > 0 ? filteredData : allData;
+    if (dataToExport.length === 0) {
+        alert('Não há dados para exportar.');
+        return;
+    }
+    const csv = Papa.unparse(dataToExport, { header: true });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'dados_filtrados_avaliacoes.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 function setupScrollSynchronization() {
-    const dataTable = dataTableContainer.querySelector('table'); 
-
+    const dataTable = dataTableContainer.querySelector('table');
     if (dataTable) {
+        topScrollContainer.style.display = 'block';
         topScrollBar.style.width = dataTable.scrollWidth + 'px';
-
-        topScrollContainer.onscroll = () => {
-            dataTableContainer.scrollLeft = topScrollContainer.scrollLeft;
-        };
-
-        dataTableContainer.onscroll = () => {
-            topScrollContainer.scrollLeft = dataTableContainer.scrollLeft;
-        };
+        topScrollContainer.onscroll = () => { dataTableContainer.scrollLeft = topScrollContainer.scrollLeft; };
+        dataTableContainer.onscroll = () => { topScrollContainer.scrollLeft = dataTableContainer.scrollLeft; };
     } else {
         topScrollContainer.style.display = 'none';
     }
 }
 
-// Função para calcular a média da 'Avaliação de Fluência 2021' por 'ESCOLA'
-function calculateAverageFluenciaBySchool(data) {
-    const schoolData = {}; 
+// --- EVENT LISTENERS ---
+document.addEventListener('DOMContentLoaded', loadGoogleSheetData);
+applyFiltersButton.addEventListener('click', applyFilters);
+clearFiltersButton.addEventListener('click', clearFilters);
+exportCsvButton.addEventListener('click', exportDataToCSV);
 
-    data.forEach(row => {
-        const school = row['ESCOLA'];
-        const fluenciaScore = row['Avaliação de Fluência 2021']; 
-
-        if (school && fluenciaScore) {
-            let scoreValue;
-            const preLeitorMatch = fluenciaScore.match(/Pré Leitor (\d+)/);
-            if (preLeitorMatch) {
-                scoreValue = parseInt(preLeitorMatch[1]); 
-            } else if (fluenciaScore.toLowerCase().includes('iniciante')) {
-                scoreValue = 7; 
-            } else if (fluenciaScore.toLowerCase().includes('fluente')) {
-                scoreValue = 8; 
-            } else {
-                scoreValue = 0; 
-            }
-            
-            if (!schoolData[school]) {
-                schoolData[school] = { total: 0, count: 0 };
-            }
-            schoolData[school].total += scoreValue;
-            schoolData[school].count += 1;
-        }
-    });
-
-    const labels = [];
-    const averages = [];
-
-    Object.keys(schoolData).sort().forEach(school => {
-        const avg = schoolData[school].count > 0 ? (schoolData[school].total / schoolData[school].count).toFixed(1) : 0;
-        labels.push(toTitleCase(school)); 
-        averages.push(avg);
-    });
-
-    return { labels, averages };
-}
-
-// Função para desenhar o gráfico de barras
-function drawFluencia2021Chart(data) {
-    const chartData = calculateAverageFluenciaBySchool(data);
-    const chartCanvas = document.getElementById('fluencia2021Chart');
-    
-    if (!chartData.labels.length || !chartCanvas) {
-        if (currentChart) {
-            currentChart.destroy();
-            currentChart = null;
-        }
-        return;
-    }
-
-    const ctx = chartCanvas.getContext('2d');
-
-    if (currentChart) {
-        currentChart.destroy();
-    }
-
-    currentChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.labels,
-            datasets: [{
-                label: 'Média de Avaliação de Fluência 2021', 
-                data: chartData.averages,
-                backgroundColor: 'rgba(54, 162, 235, 0.8)', 
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Média de Nível de Fluência'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Escola'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                title: {
-                    display: true,
-                    text: 'Média da Avaliação de Fluência 2021 por Escola' 
-                }
-            }
-        }
-    });
-}
-
-
-// NOVO: Função para limpar todos os filtros
-function clearFilters() {
-    // Reseta todos os filtros principais para a opção padrão (vazio)
-    schoolFilter.value = '';
-    evaluationFilter.value = '';
-    yearFilter.value = '';
-    turmaFilter.value = '';
-
-    // Reseta e oculta os filtros dinâmicos
-    levelFilter.value = '';
-    levelFilterGroup.style.display = 'none';
-
-    nseFilter.value = '';
-    nseFilterGroup.style.display = 'none';
-
-    corRacaFilter.value = '';
-    corRacaFilterGroup.style.display = 'none';
-
-    inclusaoFilter.value = '';
-    inclusaoFilterGroup.style.display = 'none';
-
-    transporteFilter.value = '';
-    transporteFilterGroup.style.display = 'none';
-
-    // Chama applyFilters para re-renderizar a dashboard no estado inicial (sem dados exibidos)
-    applyFilters();
-}
-
-
-// Event Listeners
-applyFiltersButton.addEventListener('click', applyFilters); 
-
-// Adiciona um listener ao botão Limpar Filtros
-clearFiltersButton.addEventListener('click', clearFilters); 
-
-// Listener para o filtro de Avaliação (mostra/oculta e popula os filtros dinâmicos)
 evaluationFilter.addEventListener('change', () => {
-    const selectedEvaluation = evaluationFilter.value;
-    populateLevelFilter(selectedEvaluation); 
-    toggleAndPopulateDemographicFilters(selectedEvaluation !== ""); 
+    updateDynamicFilters(evaluationFilter.value);
     applyFilters(); 
-});
-
-// Listeners para os novos filtros demográficos (chama applyFilters ao mudar)
-levelFilter.addEventListener('change', applyFilters);
-nseFilter.addEventListener('change', applyFilters);
-corRacaFilter.addEventListener('change', applyFilters);
-inclusaoFilter.addEventListener('change', applyFilters);
-transporteFilter.addEventListener('change', applyFilters);
-
-
-// Carrega a biblioteca Chart.js e depois os dados da planilha quando a página é carregada
-document.addEventListener('DOMContentLoaded', () => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    script.onload = loadGoogleSheetData; 
-    document.head.appendChild(script);
 });
