@@ -1,5 +1,5 @@
 // **LINK DA SUA PLANILHA DO GOOGLE SHEETS (PUBLICADA EM CSV)**
-const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQAz9Zj5zdAT5quPMUmWcp_5nqtptO54j2UIKsj5HLdrygI27XqkeB_MXjiyZLrOKkt2btLptyUtz2B/pub?output=csv';
+const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRksD0qVfRpagTtC5dIlImsoVh4Gcb_aiqtJGXeL2d3X6f44oCrR9odhiKwyQAK-fifiUsroVLhU87m/pub?output=csv';
 
 let allData = [];
 let filteredData = [];

@@ -71,7 +71,7 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.2rem; /* Aumenta o tamanho dos ícones */
+    font-size: 1.2rem;
 }
 .theme-switcher { position: relative; display: inline-block; width: 50px; height: 26px; }
 .theme-switcher input { opacity: 0; width: 0; height: 0; }
@@ -80,7 +80,7 @@ header {
 input:checked + .slider { background-color: #2196F3; }
 input:checked + .slider:before { transform: translateX(24px); }
 .theme-icon {
-    line-height: 1; /* Alinha os emojis verticalmente */
+    line-height: 1;
 }
 
 
@@ -143,7 +143,7 @@ main {
 .search-container { display: flex; align-items: center; gap: 10px; }
 #student-search {
     padding: 8px 12px; border: 1px solid var(--border-color);
-    border-radius: 5px; font-size: 0.95rem; height: 40px;
+    border-radius: 5px; font-size: 0.95rem; height: 40px; width: 100%; max-width: 300px;
     background-color: var(--main-bg-color); color: var(--text-color);
 }
 #student-search::placeholder { color: #999; }
@@ -256,11 +256,25 @@ footer {
     from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     to { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
 }
-/* Media Queries */
+/* Media Queries para Responsividade */
+@media (max-width: 992px) {
+    .summary-card {
+        flex-basis: 100%; /* Faz os cards ocuparem a largura total */
+    }
+}
 @media (max-width: 768px) {
     body { padding: 10px; }
     main { padding: 15px; }
-    header { justify-content: center; gap: 20px; }
+    header {
+        position: relative;
+        padding-bottom: 50px; /* Adiciona espaço para o seletor de tema abaixo */
+    }
+    .theme-switcher-container {
+        position: static; /* Remove o posicionamento absoluto */
+        justify-content: center; /* Centraliza o seletor */
+        width: 100%;
+        margin-top: 15px;
+    }
     .filters { flex-direction: column; align-items: stretch; }
     .filter-group { min-width: unset; }
 }
