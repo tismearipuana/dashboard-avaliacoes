@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Histórico de desempenho do aluno - Dashboard de Avaliações Escolares">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    
+    <title>Histórico do Aluno - Dashboard de Avaliações</title>
+    <link rel="stylesheet" href="student_style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+    
+    <header role="banner">
+        <div class="header-content">
+            <h1>Histórico de Desempenho</h1>
+            <h2 id="student-name" aria-live="polite">Carregando...</h2>
+            <button id="back-button" type="button" class="back-button" onclick="window.close()" aria-label="Fechar janela e voltar">
+                ← Voltar
+            </button>
+        </div>
+    </header>
+    
+    <main id="main-content" role="main">
+        <section class="student-info" role="region" aria-labelledby="info-heading">
+            <h3 id="info-heading" class="sr-only">Informações do Aluno</h3>
+            <div id="info-container" class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Escola:</span>
+                    <span id="student-school" class="info-value">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Etapa de Ensino:</span>
+                    <span id="student-year" class="info-value">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Turma:</span>
+                    <span id="student-turma" class="info-value">-</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="view-controls" role="region" aria-labelledby="controls-heading">
+            <h3 id="controls-heading" class="sr-only">Controles de Visualização</h3>
+            <div class="controls-container">
+                <div class="filter-group">
+                    <label for="year-filter">Filtrar por Ano da Avaliação:</label>
+                    <select id="year-filter" aria-describedby="year-filter-help">
+                        <option value="">Todos os Anos</option>
+                    </select>
+                    <div id="year-filter-help" class="sr-only">Selecione um ano para filtrar o histórico</div>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="evaluation-type-filter">Tipo de Avaliação:</label>
+                    <select id="evaluation-type-filter" aria-describedby="eval-filter-help">
+                        <option value="">Todas as Avaliações</option>
+                        <option value="fluencia">Fluência</option>
+                        <option value="formativa">Formativa</option>
+                        <option value="somativa">Somativa</option>
+                        <option value="diagnostica">Diagnóstica</option>
+                    </select>
+                    <div id="eval-filter-help" class="sr-only">Selecione um tipo de avaliação para filtrar</div>
+                </div>
+                
+                <button id="export-student-data" type="button" class="export-button" aria-label="Exportar dados do aluno">
+                    📤 Exportar Dados
+                </button>
+            </div>
+        </section>
+        
+        <section id="summary-stats" class="summary-section" role="region" aria-labelledby="summary-heading" style="display: none;">
+            <h3 id="summary-heading">Resumo Estatístico</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="total-evaluations">0</span>
+                    <span class="stat-label">Total de Avaliações</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="latest-year">-</span>
+                    <span class="stat-label">Último Ano Avaliado</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="improvement-trend">-</span>
+                    <span class="stat-label">Tendência</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="history-section" role="region" aria-labelledby="history-heading">
+            <h3 id="history-heading">Histórico de Avaliações</h3>
+            
+            <div class="table-controls">
+                <div class="search-container">
+                    <label for="evaluation-search">Buscar Avaliação:</label>
+                    <input type="text" id="evaluation-search" placeholder="Digite o nome da avaliação..." aria-describedby="search-help">
+                    <div id="search-help" class="sr-only">Digite para filtrar avaliações por nome</div>
+                </div>
+                
+                <div class="sort-controls">
+                    <label for="sort-select">Ordenar por:</label>
+                    <select id="sort-select" aria-describedby="sort-help">
+                        <option value="year-asc">Ano da Avaliação (Crescente)</option>
+                        <option value="year-desc">Ano da Avaliação (Decrescente)</option>
+                        <option value="evaluation-asc">Avaliação (A-Z)</option>
+                        <option value="evaluation-desc">Avaliação (Z-A)</option>
+                    </select>
+                    <div id="sort-help" class="sr-only">Selecione como ordenar o histórico</div>
+                </div>
+            </div>
+            
+            <div id="history-table-container" role="region" aria-live="polite" tabindex="0">
+                <div class="loading-placeholder">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    <p>Carregando histórico...</p>
+                </div>
+            </div>
+        </section>
+        
+        <div id="no-data-message" class="info-message" style="display: none;" role="alert">
+            <span class="icon" aria-hidden="true">📭</span>
+            <div class="message-content">
+                <h4>Nenhum dado encontrado</h4>
+                <p>Não há dados de avaliação registrados para este aluno ou os dados não puderam ser carregados.</p>
+                <button type="button" onclick="location.reload()" class="retry-button">
+                    🔄 Tentar Novamente
+                </button>
+            </div>
+        </div>
+        
+        <div id="error-message" class="error-message" style="display: none;" role="alert">
+            <span class="icon" aria-hidden="true">⚠️</span>
+            <div class="message-content">
+                <h4>Erro ao carregar dados</h4>
+                <p id="error-details">Ocorreu um erro ao carregar os dados do aluno.</p>
+                <button type="button" onclick="location.reload()" class="retry-button">
+                    🔄 Tentar Novamente
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <footer role="contentinfo">
+        <p>&copy; 2025 Sistema de Avaliação Educacional | Secretaria Municipal de Educação de Aripuanã</p>
+    </footer>
+    
+    <div id="notification-container" aria-live="polite" aria-atomic="true"></div>
+    
+    <script src="student_script.js"></script>
+</body>
+</html>

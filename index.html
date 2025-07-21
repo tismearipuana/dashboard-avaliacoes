@@ -3,128 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard de Avaliações Escolares - Sistema de visualização de dados educacionais da Secretaria Municipal de Educação de Aripuanã">
+    <meta name="keywords" content="educação, avaliações, dashboard, escola, alunos">
+    <meta name="author" content="Secretaria Municipal de Educação de Aripuanã">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com;">
+    
     <title>Dashboard de Avaliações Escolares</title>
     <link rel="stylesheet" href="style.css">
-	<link rel="icon" href="favicon.png" type="image/png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 </head>
 <body>
-    <header>
-        <img src="logos-header.png" alt="Logos da Dashboard de Avaliações" class="header-logo">
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+    
+    <header role="banner">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #0096C7; margin: 0;">Dashboard de Avaliações Escolares</h1>
+            <p style="color: #64748b; margin: 5px 0 0; font-size: 1.1rem;">Secretaria Municipal de Educação de Aripuanã</p>
+        </div>
         <div class="theme-switcher-container">
-            <span class="theme-icon">☀️</span> 
-            <label class="theme-switcher">
-                <input type="checkbox" id="theme-toggle">
-                <span class="slider"></span>
+            <span class="theme-icon" aria-hidden="true">☀️</span> 
+            <label class="theme-switcher" for="theme-toggle">
+                <input type="checkbox" id="theme-toggle" aria-label="Alternar entre modo claro e escuro">
+                <span class="slider" role="presentation"></span>
             </label>
-            <span class="theme-icon">🌜</span>
+            <span class="theme-icon" aria-hidden="true">🌙</span>
         </div>
     </header>
+	<section class="partners-section" role="complementary" aria-label="Logos de Parceiros">
+        <div class="partners-container">
+            <img src="images\logo_dre.svg" alt="Logo DRE" loading="lazy">
+            <img src="images\logo_seduc.svg" alt="Logo SEDUC Mato Grosso" loading="lazy">
+            <img src="images\logo_aripuana_mt.svg" alt="Logo Governo Mato Grosso" loading="lazy">
+            <img src="images\logo_avalia_mt.svg" alt="Logo AvaliaMT" loading="lazy">
+            <img src="images\logo_undime.svg" alt="Logo Undime MT" loading="lazy">
+            <img src="images\logo_compromisso_crianca.svg" alt="Logo Compromisso Criança Alfabetizada" loading="lazy">
+            <img src="images\logo_alfabetiza_mt.svg" alt="Logo Alfabetiza MT" loading="lazy">
+        </div>
+    </section>
 
-    <main>
-        <section class="filters">
-            <div class="filter-group">
-                <label for="school-filter">Escola:</label>
-                <select id="school-filter">
+    <main id="main-content" role="main">
+        <section class="filters" role="region" aria-labelledby="filters-heading">
+            <h2 id="filters-heading" class="sr-only">Filtros de Dados</h2>
+            
+            <div class="filter-group" role="group" aria-labelledby="school-filter-label">
+                <label id="school-filter-label" for="school-filter">Escola:</label>
+                <select id="school-filter" aria-describedby="school-filter-help">
                     <option value="">Todas as Escolas</option>
                 </select>
+                <div id="school-filter-help" class="sr-only">Selecione uma escola para filtrar os resultados</div>
             </div>
-            <div class="filter-group">
-                <label for="evaluation-filter">Avaliação:</label>
-                <select id="evaluation-filter">
+            
+            <div class="filter-group" role="group" aria-labelledby="evaluation-filter-label">
+                <label id="evaluation-filter-label" for="evaluation-filter">Avaliação:</label>
+                <select id="evaluation-filter" aria-describedby="evaluation-filter-help">
                     <option value="">Todas as Avaliações</option>
                 </select>
+                <div id="evaluation-filter-help" class="sr-only">Selecione uma avaliação para filtrar os resultados</div>
             </div>
-            <div class="filter-group" id="level-filter-group" style="display: none;">
-                <label for="level-filter">Nível/Classificação:</label>
-                <select id="level-filter">
+            
+            <div class="filter-group" id="level-filter-group" style="display: none;" role="group" aria-labelledby="level-filter-label">
+                <label id="level-filter-label" for="level-filter">Nível/Classificação:</label>
+                <select id="level-filter" aria-describedby="level-filter-help">
                     <option value="">Todos os Níveis</option>
                 </select>
+                <div id="level-filter-help" class="sr-only">Selecione um nível para filtrar os resultados</div>
             </div>
-            <div class="filter-group" id="nse-filter-group" style="display: none;">
-                <label for="nse-filter">NSE:</label>
-                <select id="nse-filter">
-                    <option value="">Todos os NSE</option>
+            
+            <div class="filter-group" id="nse-filter-group" style="display: none;" role="group" aria-labelledby="nse-filter-label">
+                <label id="nse-filter-label" for="nse-filter">Beneficiário Social?:</label>
+                <select id="nse-filter" aria-describedby="nse-filter-help">
+                    <option value="">Todos</option>
                 </select>
+                <div id="nse-filter-help" class="sr-only">Selecione uma opção de benefício para filtrar os resultados</div>
             </div>
-            <div class="filter-group" id="cor-raca-filter-group" style="display: none;">
-                <label for="cor-raca-filter">Cor/Raça:</label>
-                <select id="cor-raca-filter">
+            
+            <div class="filter-group" id="cor-raca-filter-group" style="display: none;" role="group" aria-labelledby="cor-raca-filter-label">
+                <label id="cor-raca-filter-label" for="cor-raca-filter">Cor/Raça:</label>
+                <select id="cor-raca-filter" aria-describedby="cor-raca-filter-help">
                     <option value="">Todas as Cores/Raças</option>
                 </select>
+                <div id="cor-raca-filter-help" class="sr-only">Selecione uma cor/raça para filtrar os resultados</div>
             </div>
-            <div class="filter-group" id="inclusao-filter-group" style="display: none;">
-                <label for="inclusao-filter">Inclusão:</label>
-                <select id="inclusao-filter">
-                    <option value="">Todas as Inclusões</option>
+            
+            <div class="filter-group" id="inclusao-filter-group" style="display: none;" role="group" aria-labelledby="inclusao-filter-label">
+                <label id="inclusao-filter-label" for="inclusao-filter">Aluno PCD?:</label>
+                <select id="inclusao-filter" aria-describedby="inclusao-filter-help">
+                    <option value="">Todos</option>
                 </select>
+                <div id="inclusao-filter-help" class="sr-only">Selecione uma opção de inclusão para filtrar os resultados</div>
             </div>
-            <div class="filter-group" id="transporte-filter-group" style="display: none;">
-                <label for="transporte-filter">Transporte Escolar:</label>
-                <select id="transporte-filter">
-                    <option value="">Todos os Transportes</option>
+            
+            <div class="filter-group" id="transporte-filter-group" style="display: none;" role="group" aria-labelledby="transporte-filter-label">
+                <label id="transporte-filter-label" for="transporte-filter">Utiliza Transporte Escolar:</label>
+                <select id="transporte-filter" aria-describedby="transporte-filter-help">
+                    <option value="">Todos</option>
                 </select>
+                <div id="transporte-filter-help" class="sr-only">Selecione uma opção de transporte para filtrar os resultados</div>
             </div>
-            <div class="filter-group">
-                <label for="year-filter">Ano Letivo:</label>
-                <select id="year-filter">
-                    <option value="">Todos os Anos</option>
+            
+            <div class="filter-group" role="group" aria-labelledby="year-filter-label">
+                <label id="year-filter-label" for="year-filter">Etapa de Ensino:</label>
+                <select id="year-filter" aria-describedby="year-filter-help">
+                    <option value="">Todas as Etapas</option>
                 </select>
+                <div id="year-filter-help" class="sr-only">Selecione uma etapa para filtrar os resultados</div>
             </div>
-            <div class="filter-group">
-                <label for="turma-filter">Turma:</label>
-                <select id="turma-filter">
+            
+            <div class="filter-group" role="group" aria-labelledby="turma-filter-label">
+                <label id="turma-filter-label" for="turma-filter">Turma:</label>
+                <select id="turma-filter" aria-describedby="turma-filter-help">
                     <option value="">Todas as Turmas</option>
                 </select>
+                <div id="turma-filter-help" class="sr-only">Selecione uma turma para filtrar os resultados</div>
             </div>
-            <button id="apply-filters" aria-label="Aplicar filtros">Aplicar Filtros</button>
-            <button id="clear-filters" aria-label="Limpar filtros">Limpar Filtros</button>
-            <button id="export-csv" class="export-button" aria-label="Exportar para CSV">📤 Exportar para CSV</button>
+            
+            <button id="apply-filters" type="button" aria-label="Aplicar filtros selecionados">Aplicar Filtros</button>
+            <button id="clear-filters" type="button" aria-label="Limpar todos os filtros">Limpar Filtros</button>
+            <button id="export-csv" class="export-button" type="button" aria-label="Exportar dados filtrados para CSV">📤 Exportar para CSV</button>
         </section>
 
-        <section id="summary-section" style="display: none;">
-            <h2>Resumo dos Dados Filtrados</h2>
+        <section id="summary-section" style="display: none;" role="region" aria-labelledby="summary-heading">
+            <h2 id="summary-heading">Resumo dos Dados Filtrados</h2>
             <div class="summary-stats-container">
-                <div id="total-card" class="summary-card"></div>
-                <div id="dist-card" class="summary-card level-dist-card"></div>
-                <div id="chart-card" class="summary-card chart-card-container">
-                     <div class="chart-container">
-                        <canvas id="fluenciaChart"></canvas>
+                <div id="total-card" class="summary-card" role="img" aria-labelledby="total-card-label">
+                    <h4 id="total-card-title" class="card-title">Total de Alunos Avaliados</h4>
+                    <div id="total-card-content"></div>
+                </div>
+                <div id="dist-card" class="summary-card level-dist-card" role="img" aria-labelledby="dist-card-label">
+                    <h4 id="dist-card-title" class="card-title">Distribuição por Níveis</h4>
+                    <div id="dist-card-content"></div>
+                </div>
+                <div id="chart-card" class="summary-card chart-card-container" role="img" aria-labelledby="chart-card-label">
+                    <h4 id="chart-card-title" class="card-title">Distribuição Visual</h4>
+                    <div class="chart-container">
+                        <canvas id="fluenciaChart" aria-label="Gráfico de pizza mostrando a distribuição de alunos por nível de avaliação"></canvas>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="data-display">
+        <section class="data-display" role="region" aria-labelledby="data-heading">
             <div class="data-display-header">
-                <h2>Dados Detalhados</h2>
+                <h2 id="data-heading">Dados Detalhados</h2>
                 <div class="search-container">
                     <label for="student-search">Pesquisar Aluno:</label>
-                    <input type="text" id="student-search" placeholder="Filtrar por nome na tabela...">
+                    <input type="text" id="student-search" placeholder="Filtrar por nome na tabela..." aria-describedby="search-help">
+                    <div id="search-help" class="sr-only">Digite o nome do aluno para filtrar a tabela</div>
                 </div>
             </div>
-            <div id="top-scroll-container">
+            
+            <div id="active-filters-container" role="status" aria-live="polite"></div>
+            
+            <div id="top-scroll-container" aria-hidden="true">
                 <div id="top-scroll-bar"></div>
             </div>
-            <div id="data-table-container">
+            
+            <div id="data-table-container" role="region" aria-labelledby="table-heading" tabindex="0">
+                <h3 id="table-heading" class="sr-only">Tabela de dados dos alunos</h3>
                 <div class="info-message no-data-message">
-                    <span class="icon">📭</span> Nenhum dado carregado. Por favor, selecione os filtros e clique em "Aplicar Filtros".
+                    <span class="icon" aria-hidden="true">📭</span> Carregando dados da planilha...
                 </div>
             </div>
-            <div id="pagination-controls" class="pagination-container"></div>
+            
+            <nav id="pagination-controls" class="pagination-container" role="navigation" aria-label="Navegação de páginas"></nav>
+        </section>
+
+        <section id="school-performance-section" role="region" aria-labelledby="school-chart-heading" style="display: none;">
+            <h2 id="school-chart-heading" class="section-title">Desempenho Comparativo por Escola</h2>
+            <div class="summary-card comparative-chart-card">
+                 <div class="chart-container">
+                    <canvas id="schoolPerformanceChart" aria-label="Gráfico de barras mostrando o desempenho das escolas"></canvas>
+                </div>
+            </div>
         </section>
         
     </main>
 
-    <footer>
+    <footer role="contentinfo">
         <p>&copy; 2025 Sistema de Avaliação Educacional | Desenvolvido por Secretaria Municipal de Educação de Aripuanã</p>
     </footer>
-
-    <div id="loading-indicator" style="display: none;">
-        <p>📚 Carregando Dados... Por favor, aguarde!</p>
+    
+    <div id="student-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close-button" type="button" aria-label="Fechar modal">&times;</button>
+            <h2 id="modal-title">Progresso do Aluno</h2>
+            <div class="modal-body">
+                <div class="modal-chart-container">
+                    <canvas id="modal-progress-chart" aria-label="Gráfico de progresso do aluno ao longo do tempo"></canvas>
+                </div>
+                <div id="modal-table-container"></div>
+            </div>
+        </div>
     </div>
+
+    <div id="loading-indicator" style="display: none;" role="status" aria-live="polite">
+        <div class="loading-content">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <p id="loading-message">📚 Carregando Dados... Por favor, aguarde!</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container" aria-live="polite" aria-atomic="true"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
