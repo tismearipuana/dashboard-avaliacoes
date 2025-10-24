@@ -111,7 +111,9 @@ const EVALUATION_SCORES = (() => {
         'Avaliação Formativa Processual/Mat/2024': performanceScores2, 'Avaliação de Fluência 2024': mixedScoresLeitor,
         'Avaliação Somativa Língua Portuguesa 2024': performanceScores, 'Avaliação Somativa Matemática 2024': performanceScores,
         'Avaliação de Fluência de Saída/2024': mixedScoresNivel, 'Avaliação de Fluência de Entrada/2025': mixedScoresLeitor,
-        'Diagnóstica Matemática 2025': threePointScores, 'Diagnóstica Língua Portuguesa 2025': threePointScores
+        'Diagnóstica Matemática 2025': threePointScores, 'Diagnóstica Língua Portuguesa 2025': threePointScores,
+        'Avaliação SAEB Língua Portuguesa 2025': performanceScores,
+        'Avaliação SAEB Matemática 2025': performanceScores
     };
 })();
 
